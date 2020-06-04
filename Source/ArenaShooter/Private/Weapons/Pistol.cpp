@@ -21,7 +21,7 @@ APistol::APistol()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/MyStuff/Meshes/Pistol/Glock_Rigged.Glock_Rigged'"));
 	USkeletalMesh* Asset = MeshAsset.Object;
 	GunMesh->SetSkeletalMesh(Asset);
-	Muzzle->SetRelativeLocation(FVector(75.0f, 0.0f, 10.0f));
+	Muzzle->SetRelativeLocation(FVector(18.0f, 0.0f, 7.0f));
 }
 
 void APistol::Fire(FVector FirePoint, FRotator FireDirRotator)

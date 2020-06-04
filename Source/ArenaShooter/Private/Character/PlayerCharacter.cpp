@@ -59,7 +59,6 @@ void APlayerCharacter::BeginPlay()
 	if (ensure(HitMaterialParameter))
 	{ 
 		HitMaterialParameterinst = GetWorld()->GetParameterCollectionInstance(HitMaterialParameter);
-		TakenDamage();
 	}
 
 }
