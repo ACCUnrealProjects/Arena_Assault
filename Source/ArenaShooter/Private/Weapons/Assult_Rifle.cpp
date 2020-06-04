@@ -5,6 +5,8 @@
 
 AAssult_Rifle::AAssult_Rifle()
 {
+	myWeaponType = GunType::AssultRifle;
+
 	ClipSize = 30;
 	MaxAmmo = 180;
 	CurrentTotalAmmo = MaxAmmo - ClipSize;
@@ -15,7 +17,7 @@ AAssult_Rifle::AAssult_Rifle()
 
 	MaxRecoilCounter = 10;
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/FirstPerson/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/MyStuff/Meshes/AK/AK_rigged.AK_rigged'"));
 	USkeletalMesh* Asset = MeshAsset.Object;
 	GunMesh->SetSkeletalMesh(Asset);
 	Muzzle->SetRelativeLocation(FVector(75.0f, 0.0f, 10.0f));
@@ -27,7 +29,7 @@ void AAssult_Rifle::Fire(FVector FirePoint, FRotator FireDirRotator)
 
 	FHitResult ShotHit;
 	FireDirRotator += FRotator(FMath::RandRange(-RecoilCounter, RecoilCounter), FMath::RandRange(-RecoilCounter, RecoilCounter), 0);
-	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * RayGunRange);
+	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * Range);
 
 	FCollisionQueryParams ShotParams;
 	ShotParams.AddIgnoredActor(this);

@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartingWeapon")
 	TSubclassOf<class ABase_Weapon> StartWeapon = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitPostProcessing")
+	class UMaterialParameterCollection* HitMaterialParameter = nullptr;
+
 public:
 
 private:
@@ -57,7 +60,12 @@ private:
 
 	class UWeaponControllerComponet* MyWeaponController = nullptr;
 
+	class UMaterialParameterCollectionInstance* HitMaterialParameterinst = nullptr;
+
+	void TakenDamage();
+	void DamageEffectTimeDecrease();
+	bool TakenDamageEffect = false;
+
 	bool WeWantToFire = false;
 	int8 GunOut = 0;
-
 };

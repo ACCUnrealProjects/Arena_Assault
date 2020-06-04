@@ -3,10 +3,13 @@
 
 #include "../Public/Character/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "../Public/Component/HealthComponent.h"
 #include "../Public/Component/WeaponControllerComponet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Public/Weapons/Base_Weapon.h"
 #include "Components/CapsuleComponent.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -45,6 +48,20 @@ void APlayerCharacter::BeginPlay()
 	MyWeaponController->SetAttachSkel(SM_Arms, TEXT("Palm_R"));
 	FActorSpawnParameters SpawnParams;
 	MyWeaponController->AddGun(StartWeapon);
+
+	UHealthComponent* MyHealthComp = FindComponentByClass<UHealthComponent>();
+	if (MyHealthComp)
+	{
+		MyHealthComp->SetMaxHealth(100);
+		MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &APlayerCharacter::TakenDamage);
+	}
+
+	if (ensure(HitMaterialParameter))
+	{ 
+		HitMaterialParameterinst = GetWorld()->GetParameterCollectionInstance(HitMaterialParameter);
+		TakenDamage();
+	}
+
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds)
@@ -54,6 +71,10 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 	if (WeWantToFire && MyWeaponController)
 	{
 		MyWeaponController->FireCurrentWeapon(MyCamera->GetComponentLocation(), MyCamera->GetComponentRotation());
+	}
+	if (TakenDamageEffect)
+	{
+		DamageEffectTimeDecrease();
 	}
 }
 
@@ -114,6 +135,32 @@ void APlayerCharacter::ChangeGunThree()
 {
 	if (!MyWeaponController) { return; }
 	MyWeaponController->ChangeGun(3);
+}
+
+void APlayerCharacter::TakenDamage()
+{
+	if (!ensure(HitMaterialParameterinst)) { return; }
+	HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), 1.0f);
+	TakenDamageEffect = true;
+}
+
+void APlayerCharacter::DamageEffectTimeDecrease()
+{
+	float CurrentEffect;
+	bool GotValue = HitMaterialParameterinst->GetScalarParameterValue(TEXT("VignetteAmount"), CurrentEffect);
+
+	if(GotValue)
+	{
+		if (CurrentEffect <= 0.0f)
+		{
+			HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), 0.0f);
+			TakenDamageEffect = false;
+		}
+		else
+		{
+			HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), CurrentEffect - (GetWorld()->DeltaTimeSeconds / 3));
+		}
+	}
 }
 
 // Called to bind functionality to input

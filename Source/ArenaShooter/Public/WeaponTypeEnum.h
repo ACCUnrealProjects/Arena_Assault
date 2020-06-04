@@ -8,7 +8,9 @@
 UENUM(BlueprintType)
 enum class GunType : uint8
 {
+	None,
 	AssultRifle,
 	Pistol,
-	None
+	RayGun,
+	ShotGun
 };

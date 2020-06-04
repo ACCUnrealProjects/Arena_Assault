@@ -1,26 +1,30 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "../Public/Weapons/RayGun.h"
+
+#include "../Public/Weapons/Pistol.h"
 #include "DrawDebugHelpers.h"
 
-ARayGun::ARayGun()
+APistol::APistol()
 {
-	myWeaponType = GunType::RayGun;
+	myWeaponType = GunType::Pistol;
 
-	ClipSize = 1;
-	MaxAmmo = 30;
+	ClipSize = 8;
+	MaxAmmo = 64;
 	CurrentTotalAmmo = MaxAmmo - ClipSize;
 	CurrentClipAmmo = ClipSize;
 
-	FireRate = 1.0f;
-	TotalReloadTime = 1.0f;
+	FireRate = 0.4f;
+	TotalReloadTime = 2.0f;
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/FirstPerson/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
-	GunMesh->SetSkeletalMesh(MeshAsset.Object);
-	Muzzle->SetRelativeLocation(FVector(0.0f, 55.0f, 10.0f));
+	MaxRecoilCounter = 10;
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/MyStuff/Meshes/Pistol/Glock_Rigged.Glock_Rigged'"));
+	USkeletalMesh* Asset = MeshAsset.Object;
+	GunMesh->SetSkeletalMesh(Asset);
+	Muzzle->SetRelativeLocation(FVector(75.0f, 0.0f, 10.0f));
 }
 
-void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
+void APistol::Fire(FVector FirePoint, FRotator FireDirRotator)
 {
 	ABase_Weapon::Fire(FirePoint, FireDirRotator);
 
@@ -38,10 +42,5 @@ void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
 		DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
 	}
 	CurrentClipAmmo--;
-}
-
-void ARayGun::OnAttach(AActor* MyOwner)
-{
-	ABase_Weapon::OnAttach(MyOwner);
-	AddActorLocalRotation(FRotator(0.0f, -90.0f, 0.0f));
+	RecoilCounter = FMath::Clamp<float>(RecoilCounter + 0.05f, 0.1f, MaxRecoilCounter);
 }

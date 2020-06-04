@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActorHasDied);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActorBeenHit);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARENASHOOTER_API UHealthComponent : public UActorComponent
 {
@@ -19,11 +22,18 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthSetUp")
+	int32 MaxHealth = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthSetUp")
+	int32 Health = MaxHealth;
+
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void SetStartingHealth(uint16 StartHealth);
+	void SetMaxHealth(int32 StartHealth);
+
+	void IncreaseHealth(int32 HealthIncrease);
 
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
@@ -31,9 +41,10 @@ public:
 	UFUNCTION()
 	void TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
-private:
+	FActorHasDied IHaveDied;
 
-	int16 Health = 0;
-	int16 StartingHealth = 0;
+	FActorBeenHit IHaveBeenHit;
+
+private:
 
 };

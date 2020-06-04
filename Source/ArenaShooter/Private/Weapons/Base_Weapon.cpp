@@ -28,9 +28,10 @@ void ABase_Weapon::Tick(float DeltaTime)
 		if (GetWorld()->GetRealTimeSeconds() - ReloadStartTime >= TotalReloadTime)
 		{
 			myWeaponState = WeaponState::Idle;
-			uint32 NewClip = FMath::Clamp<uint32>(ClipSize, 0, FMath::Min(ClipSize, CurrentTotalAmmo));
+			int32 BulletsToAdd = ClipSize - CurrentClipAmmo;
+			int32 NewClip = FMath::Clamp<uint32>(ClipSize, 0, FMath::Min(ClipSize, CurrentTotalAmmo));
 			CurrentClipAmmo = NewClip;
-			CurrentTotalAmmo -= NewClip;
+			CurrentTotalAmmo -= BulletsToAdd;
 		}
 	}
 }
@@ -50,7 +51,7 @@ void ABase_Weapon::Fire(FVector FirePoint, FRotator FireDirRotator)
 
 bool ABase_Weapon::Reload()
 {
-	if (CurrentClipAmmo == ClipSize || CurrentTotalAmmo == 0) { return false; }
+	if (CurrentClipAmmo == ClipSize || CurrentTotalAmmo == 0 || myWeaponState == WeaponState::Reloading) { return false; }
 
 	myWeaponState = WeaponState::Reloading;
 	RecoilCounter = 0;

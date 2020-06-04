@@ -33,15 +33,21 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UHealthComponent::SetStartingHealth(uint16 StartHealth)
+void UHealthComponent::SetMaxHealth(int32 StartHealth)
 {
-	StartingHealth = StartHealth;
+	MaxHealth = StartHealth;
 	Health = StartHealth;
+}
+
+void UHealthComponent::IncreaseHealth(int32 HealthIncrease)
+{
+	Health += HealthIncrease;
+	Health = FMath::Clamp<int>(Health, 0, MaxHealth);
 }
 
 float UHealthComponent::GetHealthPercentage() const
 {
-	return (float)Health / (float)StartingHealth;
+	return (float)Health / (float)MaxHealth;
 }
 
 void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
@@ -52,7 +58,7 @@ void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDam
 
 	if (Health <= 0)
 	{
-		//I have died
+		IHaveBeenHit.Broadcast();
 	}
 }
 

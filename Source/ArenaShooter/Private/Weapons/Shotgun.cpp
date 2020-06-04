@@ -5,6 +5,8 @@
 
 AShotgun::AShotgun()
 {
+	myWeaponType = GunType::AssultRifle;
+
 	ClipSize = 6;
 	MaxAmmo = 36;
 	CurrentTotalAmmo = MaxAmmo - ClipSize;
@@ -18,7 +20,7 @@ AShotgun::AShotgun()
 	GunMesh->SetSkeletalMesh(Asset);
 	Muzzle->SetRelativeLocation(FVector(74.999756f, 0.000061f, 10.0f));
 
-	myWeaponType = GunType::AssultRifle;
+	myWeaponType = GunType::ShotGun;
 }
 
 void AShotgun::Fire(FVector FirePoint, FRotator FireDirRotator)
@@ -27,7 +29,7 @@ void AShotgun::Fire(FVector FirePoint, FRotator FireDirRotator)
 
 	FHitResult ShotHit;
 	FireDirRotator += FRotator(FMath::RandRange(-RecoilCounter, RecoilCounter), FMath::RandRange(-RecoilCounter, RecoilCounter), 0);
-	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * RayGunRange);
+	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * Range);
 
 	FCollisionQueryParams ShotParams;
 	ShotParams.AddIgnoredActor(this);

@@ -20,7 +20,7 @@ private:
 
 protected:
 
-	float RayGunRange = 10000.0f;
+	float Range = 500.0f;
 
 public:
 

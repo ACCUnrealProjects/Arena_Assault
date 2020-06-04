@@ -18,6 +18,11 @@ private:
 
 	uint32 Score = 0;
 
+	UFUNCTION()
+	void MyPawnHasDied();
+
+	virtual void SetPawn(APawn* InPawn) override;
+
 protected:
 
 	virtual void BeginPlay() override;

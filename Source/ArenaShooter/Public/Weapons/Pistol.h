@@ -3,16 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Public/Weapons/Base_Weapon.h"
-#include "RayGun.generated.h"
+#include "Weapons/Base_Weapon.h"
+#include "Pistol.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS()
-class ARENASHOOTER_API ARayGun : public ABase_Weapon
+class ARENASHOOTER_API APistol : public ABase_Weapon
 {
 	GENERATED_BODY()
-	
+
 private:
+
 
 protected:
 
@@ -20,10 +23,8 @@ protected:
 
 public:
 
-	ARayGun();
+	APistol();
 
 	virtual void Fire(FVector FirePoint, FRotator FireDirRotator) override;
-
-	virtual void OnAttach(AActor* MyOwner) override;
-
+	
 };

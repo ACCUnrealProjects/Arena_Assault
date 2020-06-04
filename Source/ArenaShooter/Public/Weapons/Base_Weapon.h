@@ -42,6 +42,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Ammo")
 	int32 CurrentClipAmmo;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	int32 DamagePerShot;
+
 	UPROPERTY(BlueprintReadOnly, Category = "FireState")
 	WeaponState myWeaponState = WeaponState::Idle;
 
