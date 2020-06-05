@@ -20,7 +20,6 @@ private:
 
 protected:
 
-	float Range = 500.0f;
 
 public:
 

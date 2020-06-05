@@ -2,6 +2,7 @@
 
 #include "../Public/Weapons/Assult_Rifle.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 AAssult_Rifle::AAssult_Rifle()
 {
@@ -11,6 +12,9 @@ AAssult_Rifle::AAssult_Rifle()
 	MaxAmmo = 180;
 	CurrentTotalAmmo = MaxAmmo - ClipSize;
 	CurrentClipAmmo = ClipSize;
+
+	DamagePerShot = 17;
+	Range = 8000.0f;
 
 	FireRate = 0.2f;
 	TotalReloadTime = 2.0f;
@@ -38,6 +42,7 @@ void AAssult_Rifle::Fire(FVector FirePoint, FRotator FireDirRotator)
 	DrawDebugLine(GetWorld(), FirePoint, RayEnd, FColor(255, 0, 0), true, 0, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
+		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
 		DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
 	}
 	CurrentClipAmmo--;

@@ -2,6 +2,7 @@
 
 #include "../Public/Weapons/RayGun.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 ARayGun::ARayGun()
 {
@@ -14,6 +15,9 @@ ARayGun::ARayGun()
 
 	FireRate = 1.0f;
 	TotalReloadTime = 1.0f;
+
+	DamagePerShot = 100;
+	Range = 10000.0f;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/FirstPerson/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
 	GunMesh->SetSkeletalMesh(MeshAsset.Object);
@@ -35,6 +39,7 @@ void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
 	DrawDebugLine(GetWorld(), FirePoint, RayEnd, FColor(255, 0, 0), true, 0, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
+		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
 		DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
 	}
 	CurrentClipAmmo--;

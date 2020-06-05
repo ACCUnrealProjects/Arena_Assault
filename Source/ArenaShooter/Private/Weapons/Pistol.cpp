@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "../Public/Weapons/Pistol.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 APistol::APistol()
 {
@@ -12,6 +12,9 @@ APistol::APistol()
 	MaxAmmo = 64;
 	CurrentTotalAmmo = MaxAmmo - ClipSize;
 	CurrentClipAmmo = ClipSize;
+
+	DamagePerShot = 10.0f;
+	Range = 5000.0f;
 
 	FireRate = 0.4f;
 	TotalReloadTime = 2.0f;
@@ -39,6 +42,7 @@ void APistol::Fire(FVector FirePoint, FRotator FireDirRotator)
 	DrawDebugLine(GetWorld(), FirePoint, RayEnd, FColor(255, 0, 0), true, 0, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
+		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
 		DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
 	}
 	CurrentClipAmmo--;

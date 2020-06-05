@@ -16,8 +16,6 @@ private:
 
 protected:
 
-	float Range = 10000.0f;
-
 public:
 
 	ARayGun();

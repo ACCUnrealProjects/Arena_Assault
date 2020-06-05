@@ -45,6 +45,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	int32 DamagePerShot;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Range")
+	float Range;
+
 	UPROPERTY(BlueprintReadOnly, Category = "FireState")
 	WeaponState myWeaponState = WeaponState::Idle;
 

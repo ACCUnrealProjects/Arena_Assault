@@ -62,6 +62,7 @@ private:
 
 	class UMaterialParameterCollectionInstance* HitMaterialParameterinst = nullptr;
 
+	UFUNCTION()
 	void TakenDamage();
 	void DamageEffectTimeDecrease();
 	bool TakenDamageEffect = false;
