@@ -17,12 +17,15 @@ public:
 
 private:
 
+	UFUNCTION()
+	void OnDeath();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class UStaticMeshComponent* PickUpMesh = nullptr;
+	class UStaticMeshComponent* TargetMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent")
 	class UHealthComponent* MyHealthComp = nullptr;
@@ -31,6 +34,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void OnDeath();
 
 };

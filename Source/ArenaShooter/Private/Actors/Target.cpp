@@ -10,9 +10,14 @@ ATarget::ATarget()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	TargetMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TargetMesh"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAsset(TEXT("StaticMesh'/Game/MyStuff/Meshes/Objects/Target.Target'"));
+	UStaticMesh* Asset = MeshAsset.Object;
+	TargetMesh->SetStaticMesh(Asset);
+	SetRootComponent(TargetMesh);
+
 	MyHealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));
 	MyHealthComp->bEditableWhenInherited = true;
-
 }
 
 // Called when the game starts or when spawned
