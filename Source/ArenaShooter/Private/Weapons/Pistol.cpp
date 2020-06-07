@@ -10,8 +10,6 @@ APistol::APistol()
 
 	ClipSize = 8;
 	MaxAmmo = 64;
-	CurrentTotalAmmo = MaxAmmo - ClipSize;
-	CurrentClipAmmo = ClipSize;
 
 	DamagePerShot = 10.0f;
 	Range = 5000.0f;

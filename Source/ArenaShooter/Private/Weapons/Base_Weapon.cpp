@@ -16,6 +16,19 @@ ABase_Weapon::ABase_Weapon()
 
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
 	Muzzle->SetupAttachment(GunMesh);
+
+	FireEffect = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FireEffect"));
+	FireEffect->SetupAttachment(Muzzle);
+	FireEffect->SetVisibility(false);
+	FireEffect->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ABase_Weapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CurrentTotalAmmo = MaxAmmo - ClipSize;
+	CurrentClipAmmo = ClipSize;
 }
 
 // Called every frame
@@ -41,6 +54,11 @@ void ABase_Weapon::Fire(FVector FirePoint, FRotator FireDirRotator)
 	if (FireAnimation)
 	{
 		GunMesh->PlayAnimation(FireAnimation,false);
+		float FlashScale = FMath::RandRange(0.2f, 0.4f);
+		FireEffect->SetWorldScale3D(FVector(FlashScale, FlashScale, FlashScale));
+		FireEffect->SetVisibility(true);
+		FTimerHandle Timer;
+		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABase_Weapon::DeSpawnFireEffect, 0.1f, false);
 	}
 
 	if (FireSound)
@@ -84,17 +102,26 @@ bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 		return false;
 	}
 
-	if (CurrentClipAmmo > 0)
+
+	if (GetWorld()->GetRealTimeSeconds() - LastFire >= FireRate)
 	{
-		if (GetWorld()->GetRealTimeSeconds() - LastFire >= FireRate)
+		if (CurrentClipAmmo <= 0 && CurrentTotalAmmo <= 0)
+		{
+			if (DryClipSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, DryClipSound, GetActorLocation());
+			}
+			return false;
+		}
+		else
 		{
 			myWeaponState = WeaponState::Fireing;
 			Fire(FirePoint, FireDirRotator);
 			LastFire = GetWorld()->GetRealTimeSeconds();
 			return true;
 		}
-	}
 
+	}
 	return false;
 }
 
@@ -113,6 +140,11 @@ void ABase_Weapon::ChangeActiveState(bool state)
 bool ABase_Weapon::OutOfAmmo()
 {
 	return CurrentClipAmmo == 0;
+}
+
+void ABase_Weapon::DeSpawnFireEffect()
+{
+	FireEffect->SetVisibility(false);
 }
 
 GunType ABase_Weapon::GetGunType()

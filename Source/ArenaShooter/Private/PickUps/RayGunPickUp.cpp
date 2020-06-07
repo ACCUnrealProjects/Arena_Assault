@@ -5,5 +5,5 @@
 
 ARayGunPickUp::ARayGunPickUp()
 {
-
+	myWeaponType = GunType::RayGun;
 }

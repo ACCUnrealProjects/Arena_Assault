@@ -5,5 +5,5 @@
 
 AAssultRiflePickUp::AAssultRiflePickUp()
 {
-
+	myWeaponType = GunType::AssultRifle;
 }

@@ -10,8 +10,6 @@ ARayGun::ARayGun()
 
 	ClipSize = 1;
 	MaxAmmo = 30;
-	CurrentTotalAmmo = MaxAmmo - ClipSize;
-	CurrentClipAmmo = ClipSize;
 
 	FireRate = 1.0f;
 	TotalReloadTime = 1.0f;

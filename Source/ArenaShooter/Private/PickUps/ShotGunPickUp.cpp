@@ -5,5 +5,5 @@
 
 AShotGunPickUp::AShotGunPickUp()
 {
-
+	myWeaponType = GunType::ShotGun;
 }

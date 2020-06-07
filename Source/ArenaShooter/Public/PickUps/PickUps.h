@@ -13,7 +13,7 @@ class ARENASHOOTER_API APickUps : public AActor
 	
 private:
 
-	virtual void TriggerPickUp(class AActor* OtherActor) PURE_VIRTUAL(APickUps::TriggerPickUp, return; );
+	virtual bool TriggerPickUp(class AActor* OtherActor) PURE_VIRTUAL(APickUps::TriggerPickUp, return false; );
 
 protected:
 

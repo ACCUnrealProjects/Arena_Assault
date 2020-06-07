@@ -53,10 +53,8 @@ void UWeaponControllerComponet::FireCurrentWeapon(FVector FirePoint, FRotator Fi
 
 void UWeaponControllerComponet::StopFire()
 {
-	if (CurrentWeapon != nullptr)
-	{
-		CurrentWeapon->StopFire();
-	}
+	if (CurrentWeapon == nullptr) { return; }
+	CurrentWeapon->StopFire();
 }
 
 void UWeaponControllerComponet::ChangeGun(int8 WeaponNum)

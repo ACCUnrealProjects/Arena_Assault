@@ -10,8 +10,6 @@ AShotgun::AShotgun()
 
 	ClipSize = 6;
 	MaxAmmo = 36;
-	CurrentTotalAmmo = MaxAmmo - ClipSize;
-	CurrentClipAmmo = ClipSize;
 
 	DamagePerShot = 20;
 	Range = 2000.0f;

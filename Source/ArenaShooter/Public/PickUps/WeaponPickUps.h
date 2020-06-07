@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeaponTypeEnum.h"
 #include "PickUps/PickUps.h"
 #include "WeaponPickUps.generated.h"
-
 /**
  * 
  */
@@ -16,12 +16,14 @@ class ARENASHOOTER_API AWeaponPickUps : public APickUps
 
 private:
 
-	virtual void TriggerPickUp(class AActor* OtherActor) override;
+	virtual bool TriggerPickUp(class AActor* OtherActor) override;
 
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponPickedUp")
 	TSubclassOf<class ABase_Weapon> NewWeapon;
+
+	GunType myWeaponType = GunType::None;
 
 public:
 	

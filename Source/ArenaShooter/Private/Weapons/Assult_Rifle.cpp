@@ -10,8 +10,6 @@ AAssult_Rifle::AAssult_Rifle()
 
 	ClipSize = 30;
 	MaxAmmo = 180;
-	CurrentTotalAmmo = MaxAmmo - ClipSize;
-	CurrentClipAmmo = ClipSize;
 
 	DamagePerShot = 17;
 	Range = 8000.0f;

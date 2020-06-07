@@ -60,6 +60,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	USceneComponent* Muzzle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	class UStaticMeshComponent* FireEffect = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float FireRate;
 
@@ -77,6 +80,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* FireSound = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* DryClipSound = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* FireAnimation = nullptr;
 
@@ -84,6 +90,8 @@ protected:
 	UAnimSequence* ReloadAnimation = nullptr;
 
 	AActor* GunOwner = nullptr;
+
+	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -104,6 +112,8 @@ public:
 	void ChangeActiveState(bool state);
 
 	bool OutOfAmmo();
+
+	void DeSpawnFireEffect();
 
 	GunType GetGunType();
 
