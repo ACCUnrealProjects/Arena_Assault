@@ -26,7 +26,6 @@ void UWeaponControllerComponet::BeginPlay()
 void UWeaponControllerComponet::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
 void UWeaponControllerComponet::FireCurrentWeapon(FVector FirePoint, FRotator FireDirRotator)
@@ -41,7 +40,7 @@ void UWeaponControllerComponet::FireCurrentWeapon(FVector FirePoint, FRotator Fi
 			GunType MyGunType = CurrentWeapon->GetGunType();
 			if (AnimInstance && FireAnimations[MyGunType])
 			{
-				AnimInstance->Montage_Play(FireAnimations[MyGunType], 1.f);
+				AnimInstance->Montage_Play(FireAnimations[MyGunType]);
 			}
 		}
 		else if (CurrentWeapon->OutOfAmmo())
@@ -59,10 +58,12 @@ void UWeaponControllerComponet::StopFire()
 
 void UWeaponControllerComponet::ChangeGun(int8 WeaponNum)
 {
-	if (MyEquipedGuns.Num() <= 0 || WeaponNum > MyEquipedGuns.Num() - 1) { return; }
+	if (MyEquipedGuns.Num() < 0 || WeaponNum > MyEquipedGuns.Num() - 1) { return; }
+	UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
+	AnimInstance->Montage_Stop(0.0f);
 
-	CurrentWeapon = MyEquipedGuns[WeaponNum];
 	CurrentWeapon->ChangeActiveState(false);
+	CurrentWeapon = MyEquipedGuns[WeaponNum];
 	CurrentWeapon->ChangeActiveState(true);
 }
 
@@ -76,7 +77,7 @@ void UWeaponControllerComponet::Reload()
 			GunType MyGunType = CurrentWeapon->GetGunType();
 			if (AnimInstance && ReloadAnimations[MyGunType])
 			{
-				AnimInstance->Montage_Play(ReloadAnimations[MyGunType], 1.f);
+				AnimInstance->Montage_Play(ReloadAnimations[MyGunType]);
 			}
 		}
 	}
@@ -89,7 +90,7 @@ void UWeaponControllerComponet::AddGun(TSubclassOf<ABase_Weapon> NewWeapon)
 	if (!NewGun) { return; }
 	NewGun->FindComponentByClass<USkeletalMeshComponent>()->AttachToComponent(WeaponAttachSkel, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), FName(PointInSkel));
 	NewGun->OnAttach(GetOwner());
-	MyEquipedGuns.Add(NewGun);
+	MyEquipedGuns.Emplace(NewGun);
 	if (CurrentWeapon != nullptr && MyEquipedGuns.Num() > 0)
 	{
 		CurrentWeapon->ChangeActiveState(false);

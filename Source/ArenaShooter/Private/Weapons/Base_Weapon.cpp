@@ -21,6 +21,7 @@ ABase_Weapon::ABase_Weapon()
 	FireEffect->SetupAttachment(Muzzle);
 	FireEffect->SetVisibility(false);
 	FireEffect->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	FireEffect->CastShadow = false;
 }
 
 void ABase_Weapon::BeginPlay()
@@ -54,7 +55,7 @@ void ABase_Weapon::Fire(FVector FirePoint, FRotator FireDirRotator)
 	if (FireAnimation)
 	{
 		GunMesh->PlayAnimation(FireAnimation,false);
-		float FlashScale = FMath::RandRange(0.2f, 0.4f);
+		float FlashScale = FMath::RandRange(0.2f, 0.3f);
 		FireEffect->SetWorldScale3D(FVector(FlashScale, FlashScale, FlashScale));
 		FireEffect->SetVisibility(true);
 		FTimerHandle Timer;
@@ -102,7 +103,6 @@ bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 		return false;
 	}
 
-
 	if (GetWorld()->GetRealTimeSeconds() - LastFire >= FireRate)
 	{
 		if (CurrentClipAmmo <= 0 && CurrentTotalAmmo <= 0)
@@ -113,7 +113,7 @@ bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 			}
 			return false;
 		}
-		else
+		else if(CurrentClipAmmo > 0)
 		{
 			myWeaponState = WeaponState::Fireing;
 			Fire(FirePoint, FireDirRotator);
@@ -125,13 +125,13 @@ bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 	return false;
 }
 
-void ABase_Weapon::ChangeActiveState(bool state)
+void ABase_Weapon::ChangeActiveState(bool AmIActive)
 {
-	SetActorHiddenInGame(state);
+	SetActorHiddenInGame(!AmIActive);
 
-	SetActorEnableCollision(state);
+	SetActorEnableCollision(AmIActive);
 
-	SetActorTickEnabled(state);
+	SetActorTickEnabled(AmIActive);
 
 	myWeaponState = WeaponState::Idle;
 }
@@ -139,7 +139,7 @@ void ABase_Weapon::ChangeActiveState(bool state)
 
 bool ABase_Weapon::OutOfAmmo()
 {
-	return CurrentClipAmmo == 0;
+	return CurrentClipAmmo <= 0;
 }
 
 void ABase_Weapon::DeSpawnFireEffect()

@@ -60,7 +60,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	USceneComponent* Muzzle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	UPROPERTY(BlueprintReadOnly, Category = "Setup")
 	class UStaticMeshComponent* FireEffect = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
@@ -109,7 +109,7 @@ public:
 
 	virtual void OnAttach(AActor* MyOwner);
 
-	void ChangeActiveState(bool state);
+	void ChangeActiveState(bool AmIActive);
 
 	bool OutOfAmmo();
 

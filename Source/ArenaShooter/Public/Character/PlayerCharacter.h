@@ -46,6 +46,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitPostProcessing")
 	class UMaterialParameterCollection* HitMaterialParameter = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponController")
+	class UWeaponControllerComponet* MyWeaponController = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent")
+	class UHealthComponent* MyHealthComp = nullptr;
+
 public:
 
 private:
@@ -57,8 +63,6 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Setup")
 	class USkeletalMeshComponent* SM_Arms;
-
-	class UWeaponControllerComponet* MyWeaponController = nullptr;
 
 	class UMaterialParameterCollectionInstance* HitMaterialParameterinst = nullptr;
 

@@ -34,27 +34,28 @@ APlayerCharacter::APlayerCharacter()
 	SM_Arms->bCastDynamicShadow = false;
 	SM_Arms->CastShadow = false;
 	SM_Arms->SetRelativeLocation(FVector(0.f, 10.0f, -20.0f));
+
+	MyWeaponController = CreateDefaultSubobject<UWeaponControllerComponet>(TEXT("MyWeaponComponent"));
+	MyWeaponController->bEditableWhenInherited = true;
+
+	MyHealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));
+	MyHealthComp->bEditableWhenInherited = true;
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	MyMoveComp->MaxAcceleration = 4000;
 	MyMoveComp->MaxWalkSpeed = 600;
 	MyMoveComp->AirControl = 0.5f;
 
-	MyWeaponController = FindComponentByClass<UWeaponControllerComponet>();
 	MyWeaponController->SetAttachSkel(SM_Arms, TEXT("Palm_R"));
-	FActorSpawnParameters SpawnParams;
 	MyWeaponController->AddGun(StartWeapon);
 
-	UHealthComponent* MyHealthComp = FindComponentByClass<UHealthComponent>();
-	if (MyHealthComp)
-	{
-		MyHealthComp->SetMaxHealth(100);
-		MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &APlayerCharacter::TakenDamage);
-	}
+	MyHealthComp->SetMaxHealth(100);
+	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &APlayerCharacter::TakenDamage);
 
 	if (ensure(HitMaterialParameter))
 	{ 
@@ -121,19 +122,19 @@ void APlayerCharacter::Reload()
 void APlayerCharacter::ChangeGunOne()
 {
 	if (!MyWeaponController) { return; }
-	MyWeaponController->ChangeGun(1);
+	MyWeaponController->ChangeGun(0);
 }
 
 void APlayerCharacter::ChangeGunTwo()
 {
 	if (!MyWeaponController) { return; }
-	MyWeaponController->ChangeGun(2);
+	MyWeaponController->ChangeGun(1);
 }
 
 void APlayerCharacter::ChangeGunThree()
 {
 	if (!MyWeaponController) { return; }
-	MyWeaponController->ChangeGun(3);
+	MyWeaponController->ChangeGun(2);
 }
 
 void APlayerCharacter::TakenDamage()

@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	class UStaticMeshComponent* PickUpMesh = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent")
+	class UHealthComponent* MyHealthComp = nullptr;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

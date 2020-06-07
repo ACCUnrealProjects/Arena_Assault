@@ -10,6 +10,9 @@ ATarget::ATarget()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	MyHealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));
+	MyHealthComp->bEditableWhenInherited = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -17,10 +20,8 @@ void ATarget::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UHealthComponent* MyHealthCon = FindComponentByClass<UHealthComponent>();
-	if (!ensure(MyHealthCon)) { return; }
-	MyHealthCon->SetMaxHealth(1);
-	MyHealthCon->IHaveDied.AddUniqueDynamic(this, &ATarget::OnDeath);
+	MyHealthComp->SetMaxHealth(1);
+	MyHealthComp->IHaveDied.AddUniqueDynamic(this, &ATarget::OnDeath);
 }
 
 // Called every frame

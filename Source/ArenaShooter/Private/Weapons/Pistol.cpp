@@ -15,7 +15,7 @@ APistol::APistol()
 	Range = 5000.0f;
 
 	FireRate = 0.4f;
-	TotalReloadTime = 2.0f;
+	TotalReloadTime = 1.5f;
 
 	MaxRecoilCounter = 10;
 
