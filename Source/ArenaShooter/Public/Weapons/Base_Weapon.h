@@ -73,9 +73,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Reloading")
 	float TotalReloadTime;
 
-	float LastFire = -10.0f;
+	FTimerHandle ReloadTimer;
 
-	float ReloadStartTime = -10.0f;
+	float LastFire = -10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* FireSound = nullptr;
@@ -93,11 +93,13 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void Fire(FVector FirePoint, FRotator FireDirRotator);
 
 private:
+
+	void ReloadComplete();
+
+	void DeSpawnFireEffect();
 
 public:
 
@@ -113,7 +115,7 @@ public:
 
 	bool OutOfAmmo();
 
-	void DeSpawnFireEffect();
+	void AddAmmo(int32 Ammo);
 
 	GunType GetGunType();
 

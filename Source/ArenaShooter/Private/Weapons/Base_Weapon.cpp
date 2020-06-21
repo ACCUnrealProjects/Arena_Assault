@@ -5,7 +5,7 @@
 ABase_Weapon::ABase_Weapon()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	GunMesh->CastShadow = false;
@@ -32,24 +32,6 @@ void ABase_Weapon::BeginPlay()
 	CurrentClipAmmo = ClipSize;
 }
 
-// Called every frame
-void ABase_Weapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if (myWeaponState == WeaponState::Reloading)
-	{
-		if (GetWorld()->GetRealTimeSeconds() - ReloadStartTime >= TotalReloadTime)
-		{
-			myWeaponState = WeaponState::Idle;
-			int32 BulletsToAdd = ClipSize - CurrentClipAmmo;
-			int32 NewClip = FMath::Clamp<uint32>(ClipSize, 0, FMath::Min(ClipSize, CurrentTotalAmmo));
-			CurrentClipAmmo = NewClip;
-			CurrentTotalAmmo -= BulletsToAdd;
-		}
-	}
-}
-
 void ABase_Weapon::Fire(FVector FirePoint, FRotator FireDirRotator)
 {
 	if (FireAnimation)
@@ -58,8 +40,8 @@ void ABase_Weapon::Fire(FVector FirePoint, FRotator FireDirRotator)
 		float FlashScale = FMath::RandRange(0.2f, 0.3f);
 		FireEffect->SetWorldScale3D(FVector(FlashScale, FlashScale, FlashScale));
 		FireEffect->SetVisibility(true);
-		FTimerHandle Timer;
-		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABase_Weapon::DeSpawnFireEffect, 0.1f, false);
+		FTimerHandle FireTimer;
+		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ABase_Weapon::DeSpawnFireEffect, 0.1f, false);
 	}
 
 	if (FireSound)
@@ -74,12 +56,22 @@ bool ABase_Weapon::Reload()
 
 	myWeaponState = WeaponState::Reloading;
 	RecoilCounter = 0;
-	ReloadStartTime = GetWorld()->GetRealTimeSeconds();
 	if (ReloadAnimation)
 	{
 		GunMesh->PlayAnimation(ReloadAnimation, false);
 	}
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &ABase_Weapon::ReloadComplete, TotalReloadTime, false);
 	return true;
+}
+
+void ABase_Weapon::ReloadComplete()
+{
+	myWeaponState = WeaponState::Idle;
+	int32 BulletsWeCanAdd = 0;
+	int32 WantedBullets = ClipSize - CurrentClipAmmo;
+	BulletsWeCanAdd = FMath::Min(CurrentTotalAmmo, WantedBullets);
+	CurrentClipAmmo = CurrentClipAmmo + BulletsWeCanAdd;
+	CurrentTotalAmmo -= BulletsWeCanAdd;
 }
 
 void ABase_Weapon::OnAttach(AActor* MyOwner)
@@ -105,6 +97,7 @@ bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 
 	if (GetWorld()->GetRealTimeSeconds() - LastFire >= FireRate)
 	{
+		LastFire = GetWorld()->GetRealTimeSeconds();
 		if (CurrentClipAmmo <= 0 && CurrentTotalAmmo <= 0)
 		{
 			if (DryClipSound)
@@ -117,29 +110,32 @@ bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 		{
 			myWeaponState = WeaponState::Fireing;
 			Fire(FirePoint, FireDirRotator);
-			LastFire = GetWorld()->GetRealTimeSeconds();
 			return true;
 		}
-
 	}
+
 	return false;
 }
 
 void ABase_Weapon::ChangeActiveState(bool AmIActive)
 {
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
+
+	myWeaponState = WeaponState::Idle;
+
 	SetActorHiddenInGame(!AmIActive);
 
 	SetActorEnableCollision(AmIActive);
-
-	SetActorTickEnabled(AmIActive);
-
-	myWeaponState = WeaponState::Idle;
 }
-
 
 bool ABase_Weapon::OutOfAmmo()
 {
 	return CurrentClipAmmo <= 0;
+}
+
+void ABase_Weapon::AddAmmo(int32 Ammo)
+{
+	CurrentTotalAmmo = FMath::Min(CurrentTotalAmmo + Ammo, MaxAmmo);
 }
 
 void ABase_Weapon::DeSpawnFireEffect()

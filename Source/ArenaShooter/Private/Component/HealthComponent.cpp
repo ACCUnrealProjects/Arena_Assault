@@ -41,8 +41,7 @@ void UHealthComponent::SetMaxHealth(int32 StartHealth)
 
 void UHealthComponent::IncreaseHealth(int32 HealthIncrease)
 {
-	Health += HealthIncrease;
-	Health = FMath::Clamp<int>(Health, 0, MaxHealth);
+	Health = FMath::Min(Health + HealthIncrease, MaxHealth);
 }
 
 float UHealthComponent::GetHealthPercentage() const

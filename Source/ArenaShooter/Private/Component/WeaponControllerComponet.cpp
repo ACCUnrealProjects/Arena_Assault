@@ -59,6 +59,8 @@ void UWeaponControllerComponet::StopFire()
 void UWeaponControllerComponet::ChangeGun(int8 WeaponNum)
 {
 	if (MyEquipedGuns.Num() < 0 || WeaponNum > MyEquipedGuns.Num() - 1) { return; }
+	if (CurrentWeapon == MyEquipedGuns[WeaponNum]) { return; }
+
 	UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
 	AnimInstance->Montage_Stop(0.0f);
 

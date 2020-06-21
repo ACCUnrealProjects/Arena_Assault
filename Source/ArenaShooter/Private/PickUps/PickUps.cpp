@@ -6,6 +6,7 @@
 APickUps::APickUps()
 {
 	PickUpMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PickupMesh"));
+	PickUpMesh->SetSimulatePhysics(true);
 	SetRootComponent(PickUpMesh);
 	PickUpCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionCapsule"));
 	PickUpCollider->SetupAttachment(PickUpMesh);

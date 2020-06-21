@@ -13,5 +13,18 @@ UCLASS()
 class ARENASHOOTER_API AZombieAIController : public AAIController
 {
 	GENERATED_BODY()
+
+private:
+
+	APawn* PlayerPawn = nullptr;
+
+	UFUNCTION()
+	void PawnHasDiedListener();
+
+	virtual void SetPawn(APawn* InPawn) override;
+
+protected:
+
+public:
 	
 };

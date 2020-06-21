@@ -3,13 +3,15 @@
 
 #include "../Public/Character/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/Controller.h"
 #include "../Public/Component/HealthComponent.h"
 #include "../Public/Component/WeaponControllerComponet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Public/Weapons/Base_Weapon.h"
 #include "Components/CapsuleComponent.h"
-#include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "../Public/Component/GrappleControlComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -18,6 +20,11 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->SetCapsuleSize(55.f, 90.0f);
+
+	WallRunCap = CreateDefaultSubobject<UCapsuleComponent>(TEXT("WallRunCapsule"));
+	WallRunCap->SetCapsuleSize(60.0f, 90.0f);
+	WallRunCap->SetGenerateOverlapEvents(true);
+	WallRunCap->SetupAttachment(GetCapsuleComponent());
 
 	MyCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	MyCamera->SetupAttachment(GetCapsuleComponent());
@@ -34,12 +41,15 @@ APlayerCharacter::APlayerCharacter()
 	SM_Arms->bCastDynamicShadow = false;
 	SM_Arms->CastShadow = false;
 	SM_Arms->SetRelativeLocation(FVector(0.f, 10.0f, -20.0f));
-
+	
 	MyWeaponController = CreateDefaultSubobject<UWeaponControllerComponet>(TEXT("MyWeaponComponent"));
 	MyWeaponController->bEditableWhenInherited = true;
 
 	MyHealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));
 	MyHealthComp->bEditableWhenInherited = true;
+
+	MyGrappleController = CreateDefaultSubobject<UGrappleControlComponent>(TEXT("MyGrappleControlComponent"));
+	MyGrappleController->bEditableWhenInherited = true;
 }
 
 // Called when the game starts or when spawned
@@ -47,8 +57,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyMoveComp->MaxAcceleration = 4000;
-	MyMoveComp->MaxWalkSpeed = 600;
+	MyMoveComp->MaxAcceleration = 2000;
+	MyMoveComp->MaxWalkSpeed = 1000;
 	MyMoveComp->AirControl = 0.5f;
 
 	MyWeaponController->SetAttachSkel(SM_Arms, TEXT("Palm_R"));
@@ -57,30 +67,99 @@ void APlayerCharacter::BeginPlay()
 	MyHealthComp->SetMaxHealth(100);
 	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &APlayerCharacter::TakenDamage);
 
+	WallRunCap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::BeginOverlap);
+	WallRunCap->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::EndOverlap);
+
 	if (ensure(HitMaterialParameter))
-	{ 
+	{
 		HitMaterialParameterinst = GetWorld()->GetParameterCollectionInstance(HitMaterialParameter);
 	}
 
+	StartRoll = GetControlRotation().Roll;
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (WeWantToFire && MyWeaponController)
+	if (bWeWantToFire && MyWeaponController)
 	{
 		MyWeaponController->FireCurrentWeapon(MyCamera->GetComponentLocation(), MyCamera->GetComponentRotation());
 	}
-	if (TakenDamageEffect)
+
+	WallRunning(DeltaSeconds);
+
+	DamageEffectTimeDecrease();
+}
+
+void APlayerCharacter::WallRunning(float DeltaSeconds)
+{
+	if (bAmIWallRunning)
 	{
-		DamageEffectTimeDecrease();
+		MyMoveComp->AddForce(WallRunDir * 50000);
+	}
+	else if (!bAmIWallRunning && CurrentWall && bJumpBeingHeld && MyMoveComp->IsFalling())
+	{
+		bAmIWallRunning = true;
+		WallRunDir = FVector::CrossProduct(WallRayCast.Normal, GetActorUpVector());
+		float WallDor = FVector::DotProduct(WallRunDir, GetActorForwardVector());
+		if (WallDor < 0)
+		{
+			WallRunDir *= -1;
+		}
+		MyMoveComp->GravityScale = 0.2f;
+		MyMoveComp->Velocity.Z = 0;
+		float CamRollCheck = FVector::DotProduct(WallRayCast.Normal, GetActorRightVector());
+		if (CamRollCheck >= 0)
+		{
+			TargetRoll = StartRoll + 20.0f;
+		}
+		else
+		{
+			TargetRoll = StartRoll - 20.0f;
+		}
+		JumpsUsed = 0;
+	}
+	FRotator CurrentRotation = GetController()->GetControlRotation();
+	float CurrentRoll = CurrentRotation.Roll;
+	float TargetRotationDiff = TargetRoll - CurrentRoll;
+	if (TargetRotationDiff > 180)
+	{
+		TargetRotationDiff -= 360;
+	}
+	else if (TargetRotationDiff < -180)
+	{
+		TargetRotationDiff += 360;
+	}
+	float RollChange = (FMath::Clamp<float>(TargetRotationDiff, -1, +1)) * 60.0f * DeltaSeconds;
+	CurrentRotation.Roll += RollChange;
+	GetController()->SetControlRotation(CurrentRotation);
+}
+
+void APlayerCharacter::DamageEffectTimeDecrease()
+{
+	if (!bTakenDamageEffectOn) { return; }
+
+	float CurrentEffect;
+	bool GotValue = HitMaterialParameterinst->GetScalarParameterValue(TEXT("VignetteAmount"), CurrentEffect);
+
+	if (GotValue)
+	{
+		if (CurrentEffect <= 0.0f)
+		{
+			HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), 0.0f);
+			bTakenDamageEffectOn = false;
+		}
+		else
+		{
+			HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), CurrentEffect - (GetWorld()->DeltaTimeSeconds / 3));
+		}
 	}
 }
 
 void APlayerCharacter::MoveFoward(float Amount)
 {
-	if (Amount != 0)
+	if (Amount != 0 && !bAmIWallRunning)
 	{
 		AddMovementInput(GetActorForwardVector(), Amount);
 	}
@@ -88,7 +167,7 @@ void APlayerCharacter::MoveFoward(float Amount)
 
 void APlayerCharacter::MoveRight(float Amount)
 {
-	if (Amount != 0)
+	if (Amount != 0 && !bAmIWallRunning)
 	{
 		AddMovementInput(GetActorRightVector(), Amount);
 	}
@@ -101,16 +180,34 @@ void APlayerCharacter::Jump()
 		JumpsUsed++;
 		LaunchCharacter(JumpVel, false, true);
 	}
+	bJumpBeingHeld = true;
+	EndWallRun();
+}
+
+void APlayerCharacter::JumpReleased()
+{
+	bJumpBeingHeld = false;
+	EndWallRun();
 }
 
 void APlayerCharacter::SetFire()
 {
-	WeWantToFire = !WeWantToFire;
+	bWeWantToFire = !bWeWantToFire;
 
-	if (!WeWantToFire && MyWeaponController)
+	if (!bWeWantToFire && MyWeaponController)
 	{
 		MyWeaponController->StopFire();
 	}
+}
+
+void APlayerCharacter::FireGrapple()
+{
+	MyGrappleController->ShootGrappleGun(MyCamera->GetComponentRotation());
+}
+
+void APlayerCharacter::GrappleRelease()
+{
+	MyGrappleController->EndGrappleShoot();
 }
 
 void APlayerCharacter::Reload()
@@ -141,25 +238,75 @@ void APlayerCharacter::TakenDamage()
 {
 	if (!ensure(HitMaterialParameterinst)) { return; }
 	HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), 1.0f);
-	TakenDamageEffect = true;
+	bTakenDamageEffectOn = true;
+}
+void APlayerCharacter::Dash()
+{
+	if (!bCanDash) { return; }
+	bCanDash = false;
+
+	MyMoveComp->BrakingFrictionFactor = 0.0f;
+	FVector VelDir = MyMoveComp->Velocity.GetSafeNormal();
+	VelDir.Z = 0;
+	if (VelDir.IsZero()) { VelDir = GetActorForwardVector(); }
+	LaunchCharacter(VelDir * DashingSpeed, false, false);
+
+	FTimerHandle DashResetTimer;
+	GetWorld()->GetTimerManager().SetTimer(DashResetTimer, this, &APlayerCharacter::ResetDash, DashResetTime, false);
+	FTimerHandle DashTimer;
+	GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &APlayerCharacter::DashEnd, DashDuration, false);
 }
 
-void APlayerCharacter::DamageEffectTimeDecrease()
+void APlayerCharacter::DashEnd()
 {
-	float CurrentEffect;
-	bool GotValue = HitMaterialParameterinst->GetScalarParameterValue(TEXT("VignetteAmount"), CurrentEffect);
+	MyMoveComp->BrakingFrictionFactor = 1.0f;
+	//MyMoveComp->StopMovementImmediately();
+}
 
-	if(GotValue)
+void APlayerCharacter::ResetDash()
+{
+	bCanDash = true;
+}
+
+void APlayerCharacter::EndWallRun()
+{
+	MyMoveComp->GravityScale = 1.0f;
+	bAmIWallRunning = false;
+	TargetRoll = StartRoll;
+}
+
+void APlayerCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor->ActorHasTag("RunWall")) { return; }
+
+	FHitResult HitOnWall;
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByChannel(HitOnWall, GetActorLocation(), OtherActor->GetActorLocation(), ECollisionChannel::ECC_Camera, TraceParams);
+	float WallDot = FVector::DotProduct(HitOnWall.Normal, FVector::UpVector);
+
+	if (CurrentWall)
 	{
-		if (CurrentEffect <= 0.0f)
-		{
-			HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), 0.0f);
-			TakenDamageEffect = false;
-		}
-		else
-		{
-			HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), CurrentEffect - (GetWorld()->DeltaTimeSeconds / 3));
-		}
+		if (FVector::Dist(GetActorLocation(), OtherActor->GetActorLocation()) > FVector::Dist(GetActorLocation(), CurrentWall->GetActorLocation())) { return; }
+		if (WallDot < -0.2f || WallDot > 0.2f) { return; }
+	}
+	else
+	{
+		if (WallDot < -0.2f || WallDot > 0.2f) { return; }
+	}
+
+	WallRayCast = HitOnWall;
+	CurrentWall = OtherActor;
+}
+
+void APlayerCharacter::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor->ActorHasTag("RunWall")) { return; }
+
+	if (OtherActor == CurrentWall)
+	{
+		CurrentWall = nullptr;
+		EndWallRun();
 	}
 }
 
@@ -176,9 +323,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("Right", this, &APlayerCharacter::MoveRight);
 	//Jump
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &APlayerCharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &APlayerCharacter::JumpReleased);
+	//Dash
+	PlayerInputComponent->BindAction("Dash", EInputEvent::IE_Pressed, this, &APlayerCharacter::Dash);
 	//Fire
 	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &APlayerCharacter::SetFire);
 	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &APlayerCharacter::SetFire);
+	//GrappleShot
+	PlayerInputComponent->BindAction("GrappleShot", EInputEvent::IE_Pressed, this, &APlayerCharacter::FireGrapple);
+	PlayerInputComponent->BindAction("GrappleShot", EInputEvent::IE_Released, this, &APlayerCharacter::GrappleRelease);
 	//Reload
 	PlayerInputComponent->BindAction("Reload", EInputEvent::IE_Pressed, this, &APlayerCharacter::Reload);
 	//Switch Weapon
@@ -191,5 +344,6 @@ void APlayerCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 	JumpsUsed = 0;
+	EndWallRun();
 }
 

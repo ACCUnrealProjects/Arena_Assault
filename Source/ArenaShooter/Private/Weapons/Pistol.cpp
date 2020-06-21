@@ -37,11 +37,10 @@ void APistol::Fire(FVector FirePoint, FRotator FireDirRotator)
 	ShotParams.AddIgnoredActor(this);
 	ShotParams.AddIgnoredActor(GunOwner);
 
-	DrawDebugLine(GetWorld(), FirePoint, RayEnd, FColor(255, 0, 0), true, 0, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
 		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
-		DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
+		//DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
 	}
 	CurrentClipAmmo--;
 	RecoilCounter = FMath::Clamp<float>(RecoilCounter + 0.05f, 0.1f, MaxRecoilCounter);
