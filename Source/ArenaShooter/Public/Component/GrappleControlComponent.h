@@ -29,7 +29,7 @@ protected:
 
 public:	
 
-	void ShootGrappleGun(FRotator Dir);
+	void ShootGrappleGun(FVector GrappleStartPos, FRotator GrappleDir);
 
 	void EndGrappleShoot();
 		

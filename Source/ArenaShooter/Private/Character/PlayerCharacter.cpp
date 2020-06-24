@@ -202,7 +202,7 @@ void APlayerCharacter::SetFire()
 
 void APlayerCharacter::FireGrapple()
 {
-	MyGrappleController->ShootGrappleGun(MyCamera->GetComponentRotation());
+	MyGrappleController->ShootGrappleGun(MyCamera->GetComponentLocation(), MyCamera->GetComponentRotation());
 }
 
 void APlayerCharacter::GrappleRelease()

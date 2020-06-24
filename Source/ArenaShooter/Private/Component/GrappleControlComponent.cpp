@@ -28,10 +28,10 @@ void UGrappleControlComponent::BeginPlay()
 	MyGrappleGun->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
 }
 
-void UGrappleControlComponent::ShootGrappleGun(FRotator Dir)
+void UGrappleControlComponent::ShootGrappleGun(FVector GrappleStartPos, FRotator GrappleDir)
 {
 	if (!ensure(MyGrappleGun)) { return; }
-	MyGrappleGun->GrappleAttempt(Dir);
+	MyGrappleGun->GrappleAttempt(GrappleStartPos, GrappleDir);
 }
 
 void UGrappleControlComponent::EndGrappleShoot()
