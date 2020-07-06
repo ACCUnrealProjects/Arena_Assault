@@ -16,18 +16,17 @@ public:
 	AProjectile();
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* ProjectileMesh = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* MySphereCollider;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class UProjectileMovementComponent* ProjectileMoveComp;
 
 protected:
 	void BeginPlay();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class UStaticMeshComponent* ProjectileMesh = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class USphereComponent* MySphereCollider;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class UProjectileMovementComponent* ProjectileMoveComp;
 
 public:	
 

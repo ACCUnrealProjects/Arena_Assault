@@ -12,12 +12,11 @@ class ARENASHOOTER_API AGrappleGun : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
-	AGrappleGun();
 
 private:
 
 	class AActor* MyOwner;
+
 	class ACharacter* OwnerCharacter;
 
 	bool ActiveGrapple = false;
@@ -32,22 +31,22 @@ private:
 
 	FCollisionQueryParams GrappleShotParams;
 
-protected:
-
-	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties")
+	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties", meta = (AllowPrivateAccess = "true"))
 	float GrappleRange = 10000.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties")
+	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties", meta = (AllowPrivateAccess = "true"))
 	float GrapplePullForce = 20.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleMesh")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleMesh", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* GrappleShooter = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleRope")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleRope", meta = (AllowPrivateAccess = "true"))
 	class UGrabbleCable* GrappleCable = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleSpawnActor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleSpawnActor", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AActor> GrappleEndActorBP = nullptr;
+
+protected:
 
 	AActor* GrappleEndActor = nullptr;
 
@@ -55,6 +54,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	// Sets default values for this actor's properties
+	AGrappleGun();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

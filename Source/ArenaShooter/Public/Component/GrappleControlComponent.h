@@ -20,12 +20,12 @@ public:
 private:
 	AGrappleGun* MyGrappleGun = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GrappleGun", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class AGrappleGun> GrappleGun = nullptr;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleGun")
-	TSubclassOf<class AGrappleGun> GrappleGun = nullptr;
 
 public:	
 

@@ -13,6 +13,12 @@ class ARENASHOOTER_API APickUps : public AActor
 	
 private:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* PickUpMesh = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* PickUpCollider = nullptr;
+
 	virtual bool TriggerPickUp(class AActor* OtherActor) PURE_VIRTUAL(APickUps::TriggerPickUp, return false; );
 
 	UFUNCTION()
@@ -20,11 +26,6 @@ private:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class UStaticMeshComponent* PickUpMesh = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class UCapsuleComponent* PickUpCollider = nullptr;
 
 public:	
 	APickUps();

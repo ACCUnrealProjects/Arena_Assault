@@ -24,20 +24,45 @@ class ARENASHOOTER_API ABase_Weapon : public AActor
 {
 	GENERATED_BODY()
 	
-public:
-	// Sets default values for this actor's properties
-	ABase_Weapon();
+private:
+
+	UPROPERTY(BlueprintReadOnly, Category = "FireState", meta = (AllowPrivateAccess = "true"))
+	WeaponState myWeaponState = WeaponState::Idle;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* FireEffect = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* FireSound = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* DryClipSound = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimSequence* FireAnimation = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimSequence* ReloadAnimation = nullptr;
 
 protected:
+
+	UPROPERTY(BlueprintReadOnly, Category = "WeaponType")
+	GunType myWeaponType = GunType::None;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	USceneComponent* Muzzle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	USkeletalMeshComponent* GunMesh = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Ammo")
+	int32 CurrentTotalAmmo;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ammo")
 	int32 MaxAmmo;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ammo")
 	int32 ClipSize;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Ammo")
-	int32 CurrentTotalAmmo;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Ammo")
 	int32 CurrentClipAmmo;
@@ -48,46 +73,19 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Range")
 	float Range;
 
-	UPROPERTY(BlueprintReadOnly, Category = "FireState")
-	WeaponState myWeaponState = WeaponState::Idle;
-
-	UPROPERTY(BlueprintReadOnly, Category = "WeaponType")
-	GunType myWeaponType = GunType::None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	USkeletalMeshComponent* GunMesh = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	USceneComponent* Muzzle;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Setup")
-	class UStaticMeshComponent* FireEffect = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float FireRate;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Reloading")
+	float TotalReloadTime;
 
 	float RecoilCounter;
 
 	float MaxRecoilCounter;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Reloading")
-	float TotalReloadTime;
-
 	FTimerHandle ReloadTimer;
 
 	float LastFire = -10.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	USoundBase* FireSound = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	USoundBase* DryClipSound = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UAnimSequence* FireAnimation = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UAnimSequence* ReloadAnimation = nullptr;
 
 	AActor* GunOwner = nullptr;
 
@@ -103,6 +101,9 @@ private:
 
 public:
 
+	// Sets default values for this actor's properties
+	ABase_Weapon();
+
 	virtual bool Reload();
 
 	bool DidIFire(FVector FirePoint, FRotator FireDirRotator);
@@ -111,12 +112,12 @@ public:
 
 	virtual void OnAttach(AActor* MyOwner);
 
-	void ChangeActiveState(bool AmIActive);
+	void ChangeActiveState(const bool AmIActive);
 
-	bool OutOfAmmo();
+	bool OutOfAmmo() const;
 
-	void AddAmmo(int32 Ammo);
+	void AddAmmo(const int32 Ammo);
 
-	GunType GetGunType();
+	GunType GetGunType() const;
 
 };

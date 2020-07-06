@@ -29,22 +29,21 @@ private:
 
 	FActorSpawnParameters SpawnParams;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
+	TArray<ABase_Weapon*> MyEquipedGuns;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
+	ABase_Weapon* CurrentWeapon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	TMap<GunType, UAnimMontage*> FireAnimations;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	TMap<GunType, UAnimMontage*> ReloadAnimations;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
-	TArray<ABase_Weapon*> MyEquipedGuns;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Weapons")
-	ABase_Weapon* CurrentWeapon = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
-	TMap<GunType, UAnimMontage*> FireAnimations;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
-	TMap<GunType, UAnimMontage*> ReloadAnimations;
-
 
 public:	
 	//Adding New Gun

@@ -117,7 +117,7 @@ bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 	return false;
 }
 
-void ABase_Weapon::ChangeActiveState(bool AmIActive)
+void ABase_Weapon::ChangeActiveState(const bool AmIActive)
 {
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
 
@@ -128,12 +128,12 @@ void ABase_Weapon::ChangeActiveState(bool AmIActive)
 	SetActorEnableCollision(AmIActive);
 }
 
-bool ABase_Weapon::OutOfAmmo()
+bool ABase_Weapon::OutOfAmmo() const
 {
 	return CurrentClipAmmo <= 0;
 }
 
-void ABase_Weapon::AddAmmo(int32 Ammo)
+void ABase_Weapon::AddAmmo(const int32 Ammo)
 {
 	CurrentTotalAmmo = FMath::Min(CurrentTotalAmmo + Ammo, MaxAmmo);
 }
@@ -143,7 +143,7 @@ void ABase_Weapon::DeSpawnFireEffect()
 	FireEffect->SetVisibility(false);
 }
 
-GunType ABase_Weapon::GetGunType()
+GunType ABase_Weapon::GetGunType() const
 {
 	return myWeaponType;
 }

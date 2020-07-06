@@ -19,15 +19,29 @@ private:
 
 	class UCharacterMovementComponent* MyMoveComp = nullptr;
 
+	class UAIPerceptionStimuliSourceComponent* Stimulus = nullptr;
+
+	void SetUpMyStimulis();
+
+	void PunchCooldownComplete();
+
+	bool CanPunch = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent", meta = (AllowPrivateAccess = "true"))
+	class UHealthComponent* MyHealthComp = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* ZombieMesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage", meta = (AllowPrivateAccess = "true"))
+	float PunchCoolDown = 1.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage", meta = (AllowPrivateAccess = "true"))
+	int PunchDamage = 10.0f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent")
-	class UHealthComponent* MyHealthComp = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class UStaticMeshComponent* ZombieMesh = nullptr;
 
 public:	
 	// Called every frame
@@ -35,5 +49,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void MeleeAttack(AActor* Target);
 
 };

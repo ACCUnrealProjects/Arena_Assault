@@ -12,6 +12,10 @@ APickUps::APickUps()
 	PickUpCollider->SetupAttachment(PickUpMesh);
 	PickUpCollider->SetGenerateOverlapEvents(true);
 	PickUpCollider->OnComponentBeginOverlap.AddDynamic(this, &APickUps::BeginOverlap);
+
+	PickUpMesh->SetCanEverAffectNavigation(false);
+	PickUpCollider->SetCanEverAffectNavigation(false);
+	
 }
 
 void APickUps::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

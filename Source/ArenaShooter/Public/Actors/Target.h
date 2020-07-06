@@ -20,15 +20,15 @@ private:
 	UFUNCTION()
 	void OnDeath();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* TargetMesh = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent", meta = (AllowPrivateAccess = "true"))
+	class UHealthComponent* MyHealthComp = nullptr;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	class UStaticMeshComponent* TargetMesh = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent")
-	class UHealthComponent* MyHealthComp = nullptr;
 
 public:	
 	// Called every frame

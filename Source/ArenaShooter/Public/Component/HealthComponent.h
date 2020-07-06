@@ -18,14 +18,15 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HealthSetUp", meta = (AllowPrivateAccess = "true"))
+	int32 MaxHealth = 100;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HealthSetUp", meta = (AllowPrivateAccess = "true"))
+	int32 Health = MaxHealth;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthSetUp")
-	int32 MaxHealth = 100;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthSetUp")
-	int32 Health = MaxHealth;
 
 public:
 	// Called every frame

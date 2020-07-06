@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "../Public/Weapons/Assult_Rifle.h"
-#include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 
 AAssult_Rifle::AAssult_Rifle()
