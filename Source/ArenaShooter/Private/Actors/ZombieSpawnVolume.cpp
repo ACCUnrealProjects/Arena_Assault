@@ -22,8 +22,7 @@ void AZombieSpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
 	ZombieSpawnParams.Owner = this;
-
-	GetWorld()->GetTimerManager().SetTimer(SpawnTimeHandler,this,&AZombieSpawnVolume::SpawnZombies, SpawnTimer,true);
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimeHandler,this,&AZombieSpawnVolume::SpawnZombies, FMath::FRandRange(SpawnTimerLow, SpawnTimerHigh),false);
 }
 
 // Called every frame
@@ -50,6 +49,14 @@ void AZombieSpawnVolume::SpawnZombies()
 	FRotator ZombieRotation;
 	ZombieRotation.Yaw = FMath::Rand() * 360.0f;
 
-	AZombie* NewZombie = GetWorld()->SpawnActor<AZombie>(ZombiesToSpawn, SpawnLocation, ZombieRotation, ZombieSpawnParams);
-	
+	AZombie* const NewZombie = GetWorld()->SpawnActor<AZombie>(ZombiesToSpawn, SpawnLocation, ZombieRotation, ZombieSpawnParams);
+
+	uint8 ZombieDrop = FMath::RandRange(0, 100);
+	if (ZombieDrop <= DropChance)
+	{
+		int DropPicked = FMath::RandRange(0, Drops.Num()- 1);
+		//pass drop to zombie to spawn when it dies
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimeHandler, this, &AZombieSpawnVolume::SpawnZombies, FMath::FRandRange(SpawnTimerLow, SpawnTimerHigh), false);
 }

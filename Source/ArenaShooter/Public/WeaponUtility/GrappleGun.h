@@ -32,7 +32,7 @@ private:
 	FCollisionQueryParams GrappleShotParams;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties", meta = (AllowPrivateAccess = "true"))
-	float GrappleRange = 10000.0f;
+	float GrappleRange = 5000.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties", meta = (AllowPrivateAccess = "true"))
 	float GrapplePullForce = 20.0f;

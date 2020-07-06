@@ -39,7 +39,6 @@ void AAssult_Rifle::Fire(FVector FirePoint, FRotator FireDirRotator)
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
 		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
-		//DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
 	}
 	CurrentClipAmmo--;
 	RecoilCounter = FMath::Clamp<float>(RecoilCounter + 0.2f, 0.1f, MaxRecoilCounter);

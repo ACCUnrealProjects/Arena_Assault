@@ -12,6 +12,7 @@
 #include "Materials/MaterialParameterCollectionInstance.h"
 #include "../Public/Component/GrappleControlComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -120,6 +121,7 @@ void APlayerCharacter::WallRunning(float DeltaSeconds)
 		}
 		JumpsUsed = 0;
 	}
+
 	FRotator CurrentRotation = GetController()->GetControlRotation();
 	float CurrentRoll = CurrentRotation.Roll;
 	float TargetRotationDiff = TargetRoll - CurrentRoll;
@@ -279,11 +281,35 @@ void APlayerCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 {
 	if (!OtherActor->ActorHasTag("RunWall")) { return; }
 
-	FHitResult HitOnWall;
+	FHitResult HitOnWallRight;
+	FHitResult HitOnWallLeft;
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByChannel(HitOnWall, GetActorLocation(), OtherActor->GetActorLocation(), ECollisionChannel::ECC_Camera, TraceParams);
-	float WallDot = FVector::DotProduct(HitOnWall.Normal, FVector::UpVector);
+	float WallDot = 0.0f;
+	bool RightRayTest = GetWorld()->LineTraceSingleByChannel(HitOnWallRight, GetActorLocation(), GetActorLocation() + GetActorRightVector() * 1000, ECollisionChannel::ECC_Camera, TraceParams);
+	bool LeftRayTest = GetWorld()->LineTraceSingleByChannel(HitOnWallLeft, GetActorLocation(), GetActorLocation() + -GetActorRightVector() * 1000, ECollisionChannel::ECC_Camera, TraceParams);
+
+	if (RightRayTest && !LeftRayTest)
+	{
+		WallDot = FVector::DotProduct(HitOnWallRight.Normal, FVector::UpVector);
+		WallRayCast = HitOnWallRight;
+	}
+	else if(!RightRayTest && LeftRayTest)
+	{
+		WallDot = FVector::DotProduct(HitOnWallLeft.Normal, FVector::UpVector);
+		WallRayCast = HitOnWallLeft;
+	}
+	else if(RightRayTest && LeftRayTest)
+	{
+		if (FVector::Dist(GetActorLocation(), HitOnWallRight.ImpactPoint) < FVector::Dist(GetActorLocation(), HitOnWallLeft.ImpactPoint))
+		{
+			WallRayCast = HitOnWallRight;
+		}
+		else
+		{
+			WallRayCast = HitOnWallLeft;
+		}
+	}
 
 	if (CurrentWall)
 	{
@@ -295,7 +321,6 @@ void APlayerCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 		if (WallDot < -0.2f || WallDot > 0.2f) { return; }
 	}
 
-	WallRayCast = HitOnWall;
 	CurrentWall = OtherActor;
 }
 

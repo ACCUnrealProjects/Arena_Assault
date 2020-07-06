@@ -16,9 +16,9 @@ UChasePlayer::UChasePlayer()
 EBTNodeResult::Type UChasePlayer::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)
 {
 	AZombieAIController* const MyZombieAI = Cast<AZombieAIController>(owner_comp.GetAIOwner());
-	FVector const PlayerLocation = MyZombieAI->GetBlackboard()->GetValueAsVector(GetSelectedBlackboardKey());
+	FVector const TargetLocation = MyZombieAI->GetBlackboard()->GetValueAsVector(GetSelectedBlackboardKey());
 
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(MyZombieAI, PlayerLocation);
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(MyZombieAI, TargetLocation);
 
 	FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

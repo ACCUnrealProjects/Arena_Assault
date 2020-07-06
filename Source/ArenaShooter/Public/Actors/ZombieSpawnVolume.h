@@ -22,9 +22,13 @@ private:
 	FActorSpawnParameters ZombieSpawnParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
-	float SpawnTimer = 1.5f;
-
+	float SpawnTimerLow = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
+	float SpawnTimerHigh = 1.5f;
 	FTimerHandle SpawnTimeHandler;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
+	uint8 DropChance = 10;
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +36,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class AZombie> ZombiesToSpawn;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+	TArray<TSubclassOf<class APickUps>> Drops;
 
 public:	
 	// Called every frame

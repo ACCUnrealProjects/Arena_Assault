@@ -55,7 +55,7 @@ void AGrappleGun::PullOwnerToEnd()
 {
 	if (!OwnerCharacter) { return; }
 
-	FVector PullDir = FVector(CableEndPoint - MyOwner->GetActorLocation()).GetSafeNormal();
+	FVector PullDir = FVector(CableEndPoint - OwnerCharacter->GetActorLocation()).GetSafeNormal();
 	if (PullDir.Size() == 0) { return; }
 	OwnerCharacter->LaunchCharacter(PullDir * GrapplePullForce, false, false);
 }
