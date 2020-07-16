@@ -30,7 +30,9 @@ private:
 	FActorSpawnParameters SpawnParams;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
-	TArray<ABase_Weapon*> MyEquipedGuns;
+	TArray<ABase_Weapon*> MyGuns;
+
+	TArray<GunType> GunSlots;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
 	ABase_Weapon* CurrentWeapon = nullptr;
@@ -43,11 +45,10 @@ private:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:	
 	//Adding New Gun
-	void AddGun(TSubclassOf<ABase_Weapon> NewWeapon);
+	void AddGun(TSubclassOf<ABase_Weapon> NewWeapon, GunType myWeaponType);
 	void SetAttachSkel(USkeletalMeshComponent* AttachWeaponTo, FString PointToAttachTo);
 	bool DoIAlreadyHaveGun(GunType NewGunType);
 
@@ -58,5 +59,5 @@ public:
 	void FireCurrentWeapon(FVector FirePoint, FRotator FireDirRotator);
 	void Reload();
 	void StopFire();
-	void ChangeGun(int8 WeaponNum);
+	void ChangeGun(GunType SwitchGunType);
 };

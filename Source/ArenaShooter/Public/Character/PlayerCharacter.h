@@ -18,10 +18,6 @@ private:
 	void TakenDamage();
 	void DamageEffectTimeDecrease();
 
-	//Dash Functions
-	void DashEnd();
-	void ResetDash();
-
 	//Grapple Controls
 	void FireGrapple();
 	void GrappleRelease();
@@ -37,44 +33,34 @@ private:
 
 private:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartingWeapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class ABase_Weapon> StartWeapon = nullptr;
+
 	class UMaterialParameterCollectionInstance* HitMaterialParameterinst = nullptr;
 
 	class UCharacterMovementComponent* MyMoveComp = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HitPostProcessing", meta = (AllowPrivateAccess = "true"))
+	class UMaterialParameterCollection* HitMaterialParameter = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HealthComponent", meta = (AllowPrivateAccess = "true"))
+	class UHealthComponent* MyHealthComp = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WallRunCollision", meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* WallRunCap = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"), meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* MyCamera = nullptr;
 	UPROPERTY(VisibleDefaultsOnly, Category = "Setup", meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* SM_Arms;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-	FVector JumpVel = FVector(0, 0, 450);
-
-	//Jump Dashes
-	UPROPERTY(EditDefaultsOnly, Category = "Dashing", meta = (AllowPrivateAccess = "true"))
-	float DashResetTime = 2.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Dashing", meta = (AllowPrivateAccess = "true"))
-	float DashDuration = 0.1f;
-	UPROPERTY(EditDefaultsOnly, Category = "Dashing", meta = (AllowPrivateAccess = "true"))
-	float DashingSpeed = 3000.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartingWeapon", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class ABase_Weapon> StartWeapon = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HitPostProcessing", meta = (AllowPrivateAccess = "true"))
-	class UMaterialParameterCollection* HitMaterialParameter = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponController", meta = (AllowPrivateAccess = "true"))
-	class UWeaponControllerComponet* MyWeaponController = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HealthComponent", meta = (AllowPrivateAccess = "true"))
-	class UHealthComponent* MyHealthComp = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WallRunCollision", meta = (AllowPrivateAccess = "true"))
-	class UCapsuleComponent* WallRunCap = nullptr;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"), meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* MyCamera = nullptr;
-
+	// Custom comps
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GrappleController", meta = (AllowPrivateAccess = "true"))
 	class UGrappleControlComponent* MyGrappleController;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponController", meta = (AllowPrivateAccess = "true"))
+	class UWeaponControllerComponet* MyWeaponController = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DashComponent", meta = (AllowPrivateAccess = "true"))
+	class UCharacterDashComponent* MyDashComp = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	FVector JumpVel = FVector(0, 0, 450);
 
 	// WallRunInfo
 	FVector WallRunDir;
@@ -85,7 +71,6 @@ private:
 	float TargetRoll = 0.0f;
 
 	// Condition Values
-	bool bCanDash = true;
 	bool bTakenDamageEffectOn = false;
 	bool bWeWantToFire = false;
 	bool bJumpBeingHeld = false;

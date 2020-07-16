@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapons/Base_Weapon.h"
+#include "Weapons/Single_Bullet_Fire.h"
 #include "Pistol.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARENASHOOTER_API APistol : public ABase_Weapon
+class ARENASHOOTER_API APistol : public ASingle_Bullet_Fire
 {
 	GENERATED_BODY()
 
@@ -22,7 +22,4 @@ protected:
 public:
 
 	APistol();
-
-	virtual void Fire(FVector FirePoint, FRotator FireDirRotator) override;
-	
 };

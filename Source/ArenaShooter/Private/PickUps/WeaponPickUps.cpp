@@ -16,6 +16,6 @@ bool AWeaponPickUps::TriggerPickUp(class AActor* OtherActor)
 	UWeaponControllerComponet *ActorsWeaponCon = OtherActor->FindComponentByClass<UWeaponControllerComponet>();
 	if (!ActorsWeaponCon) { return false; }
 	if (ActorsWeaponCon->DoIAlreadyHaveGun(myWeaponType)) { return false; }
-	ActorsWeaponCon->AddGun(NewWeapon);
+	ActorsWeaponCon->AddGun(NewWeapon, myWeaponType);
 	return true;
 }

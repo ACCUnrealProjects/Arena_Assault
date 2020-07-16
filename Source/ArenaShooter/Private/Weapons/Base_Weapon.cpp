@@ -1,4 +1,5 @@
 #include "../Public/Weapons/Base_Weapon.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -12,16 +13,15 @@ ABase_Weapon::ABase_Weapon()
 	GunMesh->bCastDynamicShadow = false;
 	SetRootComponent(GunMesh);
 
-	RecoilCounter = 0;
 
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
 	Muzzle->SetupAttachment(GunMesh);
 
-	FireEffect = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FireEffect"));
-	FireEffect->SetupAttachment(Muzzle);
-	FireEffect->SetVisibility(false);
-	FireEffect->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	FireEffect->CastShadow = false;
+	FireEffect = CreateDefaultSubobject<UParticleSystemComponent>(FName("Fire Effect"));
+	FireEffect->AttachToComponent(Muzzle, FAttachmentTransformRules::KeepRelativeTransform);
+	FireEffect->bAutoActivate = false;
+
+	HitEffect = CreateDefaultSubobject<UParticleSystem>(FName("Hit Effect"));
 }
 
 void ABase_Weapon::BeginPlay()
@@ -37,17 +37,12 @@ void ABase_Weapon::Fire(FVector FirePoint, FRotator FireDirRotator)
 	if (FireAnimation)
 	{
 		GunMesh->PlayAnimation(FireAnimation,false);
-		float FlashScale = FMath::RandRange(0.2f, 0.3f);
-		FireEffect->SetWorldScale3D(FVector(FlashScale, FlashScale, FlashScale));
-		FireEffect->SetVisibility(true);
-		FTimerHandle FireTimer;
-		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ABase_Weapon::DeSpawnFireEffect, 0.1f, false);
 	}
-
 	if (FireSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
+	FireEffect->Activate();
 }
 
 bool ABase_Weapon::Reload()
@@ -55,7 +50,6 @@ bool ABase_Weapon::Reload()
 	if (CurrentClipAmmo == ClipSize || CurrentTotalAmmo == 0 || myWeaponState == WeaponState::Reloading) { return false; }
 
 	myWeaponState = WeaponState::Reloading;
-	RecoilCounter = 0;
 	if (ReloadAnimation)
 	{
 		GunMesh->PlayAnimation(ReloadAnimation, false);
@@ -85,15 +79,11 @@ void ABase_Weapon::StopFire()
 	{
 		myWeaponState = WeaponState::Idle;
 	}
-	RecoilCounter = 0;
 }
 
 bool ABase_Weapon::DidIFire(FVector FirePoint, FRotator FireDirRotator)
 {
-	if (myWeaponState == WeaponState::Reloading)
-	{
-		return false;
-	}
+	if (myWeaponState == WeaponState::Reloading) { return false; }
 
 	if (GetWorld()->GetRealTimeSeconds() - LastFire >= FireRate)
 	{
@@ -136,11 +126,6 @@ bool ABase_Weapon::OutOfAmmo() const
 void ABase_Weapon::AddAmmo(const int32 Ammo)
 {
 	CurrentTotalAmmo = FMath::Min(CurrentTotalAmmo + Ammo, MaxAmmo);
-}
-
-void ABase_Weapon::DeSpawnFireEffect()
-{
-	FireEffect->SetVisibility(false);
 }
 
 GunType ABase_Weapon::GetGunType() const

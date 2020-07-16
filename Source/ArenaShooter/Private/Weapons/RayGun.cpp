@@ -27,7 +27,6 @@ void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
 	ABase_Weapon::Fire(FirePoint, FireDirRotator);
 
 	FHitResult ShotHit;
-	FireDirRotator += FRotator(FMath::RandRange(-RecoilCounter, RecoilCounter), FMath::RandRange(-RecoilCounter, RecoilCounter), 0);
 	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * Range);
 
 	FCollisionQueryParams ShotParams;

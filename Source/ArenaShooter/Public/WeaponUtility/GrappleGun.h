@@ -14,14 +14,13 @@ class ARENASHOOTER_API AGrappleGun : public AActor
 public:	
 
 private:
-
-	class AActor* MyOwner;
-
 	class ACharacter* OwnerCharacter;
 
 	bool ActiveGrapple = false;
 
 	bool ConnectionMade = false;
+
+	bool AttachedActorMoveable = false;
 
 	FVector CableEndPoint = FVector(0);
 
@@ -49,6 +48,8 @@ private:
 protected:
 
 	AActor* GrappleEndActor = nullptr;
+
+	AActor* ActorGrappleHit = nullptr;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

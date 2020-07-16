@@ -42,6 +42,11 @@ void AGrappleGun::Tick(float DeltaTime)
 
 	if (ConnectionMade)
 	{
+		if (AttachedActorMoveable && ActorGrappleHit)
+		{
+			CableEndPoint = ActorGrappleHit->GetActorLocation();
+			GrappleEndActor->SetActorLocation(CableEndPoint);
+		}
 		PullOwnerToEnd();
 	}
 	else if (ActiveGrapple)
@@ -79,10 +84,9 @@ void AGrappleGun::SetMyOwner(AActor* GOwner)
 {
 	if (!GOwner) { return; }
 
-	MyOwner = GOwner;
-	OwnerCharacter = Cast<ACharacter>(MyOwner);
+	OwnerCharacter = Cast<ACharacter>(GOwner);
 	GrappleShotParams.AddIgnoredActor(this);
-	GrappleShotParams.AddIgnoredActor(MyOwner);
+	GrappleShotParams.AddIgnoredActor(OwnerCharacter);
 }
 
 void AGrappleGun::GrappleAttempt(FVector GrappleStart, FRotator GrappleDir)
@@ -99,6 +103,11 @@ void AGrappleGun::GrappleAttempt(FVector GrappleStart, FRotator GrappleDir)
 		ref.OtherActor = GrappleEndActor;
 		GrappleCable->AttachEndTo = ref;
 		GrappleCable->ToggleVisibility(true);
+		if (GrappleHot.Actor->FindComponentByClass<UStaticMeshComponent>()->Mobility == EComponentMobility::Movable)
+		{
+			ActorGrappleHit = GrappleHot.Actor.Get();
+			AttachedActorMoveable = true;
+		}
 	}
 }
 
@@ -107,8 +116,10 @@ void AGrappleGun::DropGrapple()
 	if (ActiveGrapple || ConnectionMade) { GrappleCable->ToggleVisibility(false); }
 	ConnectionMade = false;
 	ActiveGrapple = false;
+	AttachedActorMoveable = false;
 	FComponentReference ref;
 	ref.OtherActor = nullptr;
+	ActorGrappleHit = nullptr;
 	GrappleCable->AttachEndTo = ref;
 }
 

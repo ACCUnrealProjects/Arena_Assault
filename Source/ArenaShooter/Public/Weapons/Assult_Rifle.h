@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapons/Base_Weapon.h"
+#include "Weapons/Single_Bullet_Fire.h"
 #include "Assult_Rifle.generated.h"
 
 /**
@@ -12,7 +12,7 @@
 class UAnimMontage;
 
 UCLASS()
-class ARENASHOOTER_API AAssult_Rifle : public ABase_Weapon
+class ARENASHOOTER_API AAssult_Rifle : public ASingle_Bullet_Fire
 {
 	GENERATED_BODY()
 
@@ -25,7 +25,4 @@ protected:
 public:
 
 	AAssult_Rifle();
-
-	virtual void Fire(FVector FirePoint, FRotator FireDirRotator) override;
-	
 };

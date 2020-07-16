@@ -4,15 +4,15 @@
 #include "../Public/Character/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Controller.h"
-#include "../Public/Component/HealthComponent.h"
-#include "../Public/Component/WeaponControllerComponet.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "../Public/Weapons/Base_Weapon.h"
 #include "Components/CapsuleComponent.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
-#include "../Public/Component/GrappleControlComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "DrawDebugHelpers.h"
+#include "../Public/Weapons/Base_Weapon.h"
+#include "../Public/Component/HealthComponent.h"
+#include "../Public/Component/WeaponControllerComponet.h"
+#include "../Public/Component/CharacterDashComponent.h"
+#include "../Public/Component/GrappleControlComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -51,6 +51,9 @@ APlayerCharacter::APlayerCharacter()
 
 	MyGrappleController = CreateDefaultSubobject<UGrappleControlComponent>(TEXT("MyGrappleControlComponent"));
 	MyGrappleController->bEditableWhenInherited = true;
+
+	MyDashComp = CreateDefaultSubobject<UCharacterDashComponent>(TEXT("MyDashComponent"));
+	MyDashComp->bEditableWhenInherited = true;
 }
 
 // Called when the game starts or when spawned
@@ -63,7 +66,7 @@ void APlayerCharacter::BeginPlay()
 	MyMoveComp->AirControl = 0.5f;
 
 	MyWeaponController->SetAttachSkel(SM_Arms, TEXT("Palm_R"));
-	MyWeaponController->AddGun(StartWeapon);
+	MyWeaponController->AddGun(StartWeapon, GunType::Pistol);
 
 	MyHealthComp->SetMaxHealth(100);
 	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &APlayerCharacter::TakenDamage);
@@ -214,26 +217,22 @@ void APlayerCharacter::GrappleRelease()
 
 void APlayerCharacter::Reload()
 {
-	if (!MyWeaponController) { return; }
 	MyWeaponController->Reload();
 }
 
 void APlayerCharacter::ChangeGunOne()
 {
-	if (!MyWeaponController) { return; }
-	MyWeaponController->ChangeGun(0);
+	MyWeaponController->ChangeGun(GunType::Pistol);
 }
 
 void APlayerCharacter::ChangeGunTwo()
 {
-	if (!MyWeaponController) { return; }
-	MyWeaponController->ChangeGun(1);
+	MyWeaponController->ChangeGun(GunType::AssultRifle);
 }
 
 void APlayerCharacter::ChangeGunThree()
 {
-	if (!MyWeaponController) { return; }
-	MyWeaponController->ChangeGun(2);
+	MyWeaponController->ChangeGun(GunType::RayGun);
 }
 
 void APlayerCharacter::TakenDamage()
@@ -242,32 +241,10 @@ void APlayerCharacter::TakenDamage()
 	HitMaterialParameterinst->SetScalarParameterValue(TEXT("VignetteAmount"), 1.0f);
 	bTakenDamageEffectOn = true;
 }
+
 void APlayerCharacter::Dash()
 {
-	if (!bCanDash) { return; }
-	bCanDash = false;
-
-	MyMoveComp->BrakingFrictionFactor = 0.0f;
-	FVector VelDir = MyMoveComp->Velocity.GetSafeNormal();
-	VelDir.Z = 0;
-	if (VelDir.IsZero()) { VelDir = GetActorForwardVector(); }
-	LaunchCharacter(VelDir * DashingSpeed, false, false);
-
-	FTimerHandle DashResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(DashResetTimer, this, &APlayerCharacter::ResetDash, DashResetTime, false);
-	FTimerHandle DashTimer;
-	GetWorld()->GetTimerManager().SetTimer(DashTimer, this, &APlayerCharacter::DashEnd, DashDuration, false);
-}
-
-void APlayerCharacter::DashEnd()
-{
-	MyMoveComp->BrakingFrictionFactor = 1.0f;
-	//MyMoveComp->StopMovementImmediately();
-}
-
-void APlayerCharacter::ResetDash()
-{
-	bCanDash = true;
+	MyDashComp->Dash();
 }
 
 void APlayerCharacter::EndWallRun()

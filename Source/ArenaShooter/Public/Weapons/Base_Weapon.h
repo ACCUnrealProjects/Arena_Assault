@@ -29,9 +29,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "FireState", meta = (AllowPrivateAccess = "true"))
 	WeaponState myWeaponState = WeaponState::Idle;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Setup", meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* FireEffect = nullptr;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	USoundBase* FireSound = nullptr;
 
@@ -49,8 +46,14 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WeaponType")
 	GunType myWeaponType = GunType::None;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	class UParticleSystemComponent* FireEffect = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	class UParticleSystem* HitEffect = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	USceneComponent* Muzzle;
+	USceneComponent* Muzzle = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	USkeletalMeshComponent* GunMesh = nullptr;
@@ -79,10 +82,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Reloading")
 	float TotalReloadTime;
 
-	float RecoilCounter;
-
-	float MaxRecoilCounter;
-
 	FTimerHandle ReloadTimer;
 
 	float LastFire = -10.0f;
@@ -97,8 +96,6 @@ private:
 
 	void ReloadComplete();
 
-	void DeSpawnFireEffect();
-
 public:
 
 	// Sets default values for this actor's properties
@@ -108,7 +105,7 @@ public:
 
 	bool DidIFire(FVector FirePoint, FRotator FireDirRotator);
 
-	void StopFire();
+	virtual void StopFire();
 
 	virtual void OnAttach(AActor* MyOwner);
 

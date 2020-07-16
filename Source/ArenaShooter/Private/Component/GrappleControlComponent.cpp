@@ -22,7 +22,6 @@ void UGrappleControlComponent::BeginPlay()
 	SpawnParams.Owner = GetOwner();
 	SpawnParams.Instigator = Cast<APawn>(GetOwner());
 
-	if (!ensure(GrappleGun)) { return; }
 	MyGrappleGun = GetWorld()->SpawnActor<AGrappleGun>(GrappleGun, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
 	MyGrappleGun->SetMyOwner(GetOwner());
 	MyGrappleGun->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
@@ -30,13 +29,25 @@ void UGrappleControlComponent::BeginPlay()
 
 void UGrappleControlComponent::ShootGrappleGun(FVector GrappleStartPos, FRotator GrappleDir)
 {
-	if (!ensure(MyGrappleGun)) { return; }
+	if (!MyGrappleGun) { return; }
 	MyGrappleGun->GrappleAttempt(GrappleStartPos, GrappleDir);
 }
 
 void UGrappleControlComponent::EndGrappleShoot()
 {
-	if (!ensure(MyGrappleGun)) { return; }
+	if (!MyGrappleGun) { return; }
 	MyGrappleGun->DropGrapple();
+}
 
+void UGrappleControlComponent::AddGrappleGun()
+{
+	if (MyGrappleGun) { return; }
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = GetOwner();
+	SpawnParams.Instigator = Cast<APawn>(GetOwner());
+
+	MyGrappleGun = GetWorld()->SpawnActor<AGrappleGun>(GrappleGun, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
+	MyGrappleGun->SetMyOwner(GetOwner());
+	MyGrappleGun->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
 }

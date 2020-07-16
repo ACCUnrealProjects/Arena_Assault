@@ -10,6 +10,12 @@ UWeaponControllerComponet::UWeaponControllerComponet()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
+
+	GunSlots.Add(GunType::Pistol);
+	GunSlots.Add(GunType::AssultRifle);
+	GunSlots.Add(GunType::RayGun);
+
+	MyGuns.Init(nullptr, GunSlots.Num());
 }
 
 
@@ -22,31 +28,24 @@ void UWeaponControllerComponet::BeginPlay()
 	SpawnParams.Instigator = Cast<APawn>(GetOwner());	
 }
 
-// Called every frame
-void UWeaponControllerComponet::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
 void UWeaponControllerComponet::FireCurrentWeapon(FVector FirePoint, FRotator FireDirRotator)
 {
-	if (CurrentWeapon != nullptr)
-	{
-		if (CurrentWeapon->DidIFire(FirePoint, FireDirRotator))
-		{
-			if (!WeaponAttachSkel) { return; }
+	if (CurrentWeapon == nullptr) { return; }
 
-			UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
-			GunType MyGunType = CurrentWeapon->GetGunType();
-			if (AnimInstance && FireAnimations[MyGunType])
-			{
-				AnimInstance->Montage_Play(FireAnimations[MyGunType]);
-			}
-		}
-		else if (CurrentWeapon->OutOfAmmo())
+	if (CurrentWeapon->DidIFire(FirePoint, FireDirRotator))
+	{
+		if (!WeaponAttachSkel) { return; }
+
+		UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
+		GunType MyGunType = CurrentWeapon->GetGunType();
+		if (AnimInstance && FireAnimations[MyGunType])
 		{
-			Reload();
+			AnimInstance->Montage_Play(FireAnimations[MyGunType]);
 		}
+	}
+	else if (CurrentWeapon->OutOfAmmo())
+	{
+		Reload();
 	}
 }
 
@@ -56,16 +55,25 @@ void UWeaponControllerComponet::StopFire()
 	CurrentWeapon->StopFire();
 }
 
-void UWeaponControllerComponet::ChangeGun(int8 WeaponNum)
+void UWeaponControllerComponet::ChangeGun(GunType SwitchGunType)
 {
-	if (MyEquipedGuns.Num() < 0 || WeaponNum > MyEquipedGuns.Num() - 1) { return; }
-	if (CurrentWeapon == MyEquipedGuns[WeaponNum]) { return; }
+	int GunSlot = 0;
+	for (int i = 0; i < GunSlots.Num(); i++)
+	{
+		if (GunSlots[i] == SwitchGunType)
+		{
+			GunSlot = i;
+			break;
+		}
+	}
+
+	if (CurrentWeapon == MyGuns[GunSlot] || MyGuns[GunSlot] == nullptr) { return; }
 
 	UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
 	AnimInstance->Montage_Stop(0.0f);
 
 	CurrentWeapon->ChangeActiveState(false);
-	CurrentWeapon = MyEquipedGuns[WeaponNum];
+	CurrentWeapon = MyGuns[GunSlot];
 	CurrentWeapon->ChangeActiveState(true);
 }
 
@@ -85,15 +93,24 @@ void UWeaponControllerComponet::Reload()
 	}
 }
 
-void UWeaponControllerComponet::AddGun(TSubclassOf<ABase_Weapon> NewWeapon)
+void UWeaponControllerComponet::AddGun(TSubclassOf<ABase_Weapon> NewWeapon, GunType myWeaponType)
 {
 	if (!NewWeapon) { return; }
 	ABase_Weapon* NewGun = GetWorld()->SpawnActor<ABase_Weapon>(NewWeapon, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
 	if (!NewGun) { return; }
 	NewGun->FindComponentByClass<USkeletalMeshComponent>()->AttachToComponent(WeaponAttachSkel, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), FName(PointInSkel));
 	NewGun->OnAttach(GetOwner());
-	MyEquipedGuns.Emplace(NewGun);
-	if (CurrentWeapon != nullptr && MyEquipedGuns.Num() > 0)
+	int GunSlot = 0;
+	for (int i = 0; i < GunSlots.Num(); i++)
+	{
+		if (GunSlots[i] == myWeaponType)
+		{
+			GunSlot = i;
+			break;
+		}
+	}
+	MyGuns[GunSlot] = NewGun;
+	if (CurrentWeapon != nullptr)
 	{
 		CurrentWeapon->ChangeActiveState(false);
 	}
@@ -108,11 +125,12 @@ void UWeaponControllerComponet::SetAttachSkel(USkeletalMeshComponent* AttachWeap
 
 bool UWeaponControllerComponet::DoIAlreadyHaveGun(GunType NewGunType)
 {
-	for (auto Gun : MyEquipedGuns)
+	for (int i = 0; i < GunSlots.Num(); i++)
 	{
-		if (Gun->GetGunType() == NewGunType)
+		if (GunSlots[i] == NewGunType)
 		{
-			return true;
+			if (MyGuns[i] != nullptr) { return true; }
+			else { return false; }
 		}
 	}
 	return false;
