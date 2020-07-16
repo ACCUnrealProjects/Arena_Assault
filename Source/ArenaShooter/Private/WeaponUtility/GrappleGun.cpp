@@ -103,7 +103,15 @@ void AGrappleGun::GrappleAttempt(FVector GrappleStart, FRotator GrappleDir)
 		ref.OtherActor = GrappleEndActor;
 		GrappleCable->AttachEndTo = ref;
 		GrappleCable->ToggleVisibility(true);
-		if (GrappleHot.Actor->FindComponentByClass<UStaticMeshComponent>()->Mobility == EComponentMobility::Movable)
+		if (GrappleHot.Actor->FindComponentByClass<UStaticMeshComponent>())
+		{
+			if (GrappleHot.Actor->FindComponentByClass<UStaticMeshComponent>()->Mobility == EComponentMobility::Movable)
+			{
+				ActorGrappleHit = GrappleHot.Actor.Get();
+				AttachedActorMoveable = true;
+			}
+		}
+		else if (GrappleHot.Actor->FindComponentByClass<USkeletalMeshComponent>())
 		{
 			ActorGrappleHit = GrappleHot.Actor.Get();
 			AttachedActorMoveable = true;

@@ -35,7 +35,7 @@ APlayerCharacter::APlayerCharacter()
 	MyMoveComp = FindComponentByClass<UCharacterMovementComponent>();
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/MyStuff/Meshes/Arms/FPSArms_rigged.FPSArms_rigged'"));
-	SM_Arms = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
+	SM_Arms = GetMesh();
 	SM_Arms->SetSkeletalMesh(MeshAsset.Object);
 	SM_Arms->SetOnlyOwnerSee(true);
 	SM_Arms->SetupAttachment(MyCamera);
@@ -98,6 +98,8 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 
 void APlayerCharacter::WallRunning(float DeltaSeconds)
 {
+	if (!GetController()) { return; }
+
 	if (bAmIWallRunning)
 	{
 		MyMoveComp->AddForce(WallRunDir * 50000);
@@ -143,7 +145,7 @@ void APlayerCharacter::WallRunning(float DeltaSeconds)
 
 void APlayerCharacter::DamageEffectTimeDecrease()
 {
-	if (!bTakenDamageEffectOn) { return; }
+	if (!bTakenDamageEffectOn || !GetController()) { return; }
 
 	float CurrentEffect;
 	bool GotValue = HitMaterialParameterinst->GetScalarParameterValue(TEXT("VignetteAmount"), CurrentEffect);
@@ -199,7 +201,7 @@ void APlayerCharacter::SetFire()
 {
 	bWeWantToFire = !bWeWantToFire;
 
-	if (!bWeWantToFire && MyWeaponController)
+	if (!bWeWantToFire)
 	{
 		MyWeaponController->StopFire();
 	}

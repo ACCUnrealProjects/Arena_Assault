@@ -37,8 +37,8 @@ private:
 	TSubclassOf<class ABase_Weapon> StartWeapon = nullptr;
 
 	class UMaterialParameterCollectionInstance* HitMaterialParameterinst = nullptr;
-
 	class UCharacterMovementComponent* MyMoveComp = nullptr;
+	class USkeletalMeshComponent* SM_Arms;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HitPostProcessing", meta = (AllowPrivateAccess = "true"))
 	class UMaterialParameterCollection* HitMaterialParameter = nullptr;
@@ -48,8 +48,6 @@ private:
 	class UCapsuleComponent* WallRunCap = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"), meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* MyCamera = nullptr;
-	UPROPERTY(VisibleDefaultsOnly, Category = "Setup", meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* SM_Arms;
 
 	// Custom comps
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GrappleController", meta = (AllowPrivateAccess = "true"))

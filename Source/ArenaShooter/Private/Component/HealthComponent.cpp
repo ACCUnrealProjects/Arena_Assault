@@ -55,14 +55,13 @@ void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDam
 	intDamage = FMath::Clamp<int>(intDamage, 0, Health);
 	Health -= intDamage;
 
-	if (Damage > 0)
-	{
-		IHaveBeenHit.Broadcast();
-	}
-
 	if (Health <= 0)
 	{
 		IHaveDied.Broadcast();
+	}
+	else if (Damage > 0)
+	{
+		IHaveBeenHit.Broadcast();
 	}
 }
 

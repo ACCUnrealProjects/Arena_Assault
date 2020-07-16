@@ -26,17 +26,20 @@ void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
 {
 	ABase_Weapon::Fire(FirePoint, FireDirRotator);
 
-	FHitResult ShotHit;
+	TArray<FHitResult> ShotHits;
 	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * Range);
 
 	FCollisionQueryParams ShotParams;
 	ShotParams.AddIgnoredActor(this);
 	ShotParams.AddIgnoredActor(GunOwner);
 
-	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
+	if (GetWorld()->LineTraceMultiByChannel(ShotHits, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
-		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
-		//DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
+		for (int i = 0; i < ShotHits.Num(); i++)
+		{
+			UGameplayStatics::ApplyDamage(ShotHits[i].GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
+			//DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
+		}
 	}
 	CurrentClipAmmo--;
 }

@@ -21,7 +21,12 @@ EBTNodeResult::Type UMeleeAttack::ExecuteTask(UBehaviorTreeComponent& owner_comp
 
 	AActor* TargetActor = Cast<AActor>(AiControl->GetBlackboard()->GetValueAsObject(GetSelectedBlackboardKey()));
 
-	if (Zombie && TargetActor)
+	if (!TargetActor)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	if (Zombie)
 	{
 		Zombie->MeleeAttack(TargetActor);
 	}

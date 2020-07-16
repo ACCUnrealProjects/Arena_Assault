@@ -16,6 +16,7 @@ void AMainPlayerController::BeginPlay()
 void AMainPlayerController::MyPawnHasDied()
 {
 	StartSpectatingOnly();
+	//GetWorld()->DestroyActor(GetPawn());
 }
 
 void AMainPlayerController::SetPawn(APawn* InPawn)
