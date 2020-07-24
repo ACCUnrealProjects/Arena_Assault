@@ -113,7 +113,7 @@ void APlayerCharacter::WallRunning(float DeltaSeconds)
 		{
 			WallRunDir *= -1;
 		}
-		MyMoveComp->GravityScale = 0.2f;
+		MyMoveComp->GravityScale = 0.5f;
 		MyMoveComp->Velocity.Z = 0;
 		float CamRollCheck = FVector::DotProduct(WallRayCast.Normal, GetActorRightVector());
 		if (CamRollCheck >= 0)
@@ -351,3 +351,9 @@ void APlayerCharacter::Landed(const FHitResult& Hit)
 	EndWallRun();
 }
 
+void APlayerCharacter::Destroyed()
+{
+	MyWeaponController->CleanUp();
+	MyGrappleController->CleanUp();
+	Super::Destroyed();
+}

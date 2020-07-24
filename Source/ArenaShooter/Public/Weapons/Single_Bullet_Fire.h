@@ -26,6 +26,9 @@ protected:
 
 	void Fire(FVector FirePoint, FRotator FireDirRotator) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	TSubclassOf<class ATracerRound> ProjectileBlueprint;
+
 public:
 
 	ASingle_Bullet_Fire();

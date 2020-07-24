@@ -70,6 +70,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Ammo")
 	int32 CurrentClipAmmo;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Ammo")
+	bool InfiniteAmmo = false;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	int32 DamagePerShot;
 

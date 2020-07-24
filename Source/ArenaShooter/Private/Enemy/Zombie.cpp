@@ -60,12 +60,6 @@ void AZombie::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
-void AZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
 void AZombie::MeleeAttack(AActor* target)
 {	
 	if (!CanPunch || !target) { return; }

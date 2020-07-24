@@ -60,4 +60,6 @@ public:
 	void Reload();
 	void StopFire();
 	void ChangeGun(GunType SwitchGunType);
+
+	void CleanUp();
 };

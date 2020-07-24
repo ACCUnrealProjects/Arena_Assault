@@ -10,7 +10,7 @@
 UIsTargetInMeleeRange::UIsTargetInMeleeRange()
 {
 	bNotifyBecomeRelevant = true;
-	NodeName = TEXT("Traget In Melee Range");
+	NodeName = TEXT("Target In Melee Range");
 }
 
 void UIsTargetInMeleeRange::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

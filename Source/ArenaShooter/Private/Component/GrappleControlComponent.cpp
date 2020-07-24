@@ -51,3 +51,10 @@ void UGrappleControlComponent::AddGrappleGun()
 	MyGrappleGun->SetMyOwner(GetOwner());
 	MyGrappleGun->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
 }
+
+
+void UGrappleControlComponent::CleanUp()
+{
+	GetWorld()->DestroyActor(MyGrappleGun);
+	MyGrappleGun = nullptr;
+}

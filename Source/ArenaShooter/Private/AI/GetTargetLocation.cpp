@@ -21,8 +21,6 @@ EBTNodeResult::Type UGetTargetLocation::ExecuteTask(UBehaviorTreeComponent& owne
 	if (!TargetActor) { return EBTNodeResult::Failed; }
 	FVector const TargetPos = Cast<AActor>(TargetActor)->GetActorLocation();
 
-
-
 	if (search_random)
 	{
 		FNavLocation NavLocation;

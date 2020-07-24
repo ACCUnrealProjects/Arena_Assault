@@ -140,3 +140,16 @@ ABase_Weapon* UWeaponControllerComponet::GetCurrentGun()
 {
 	return CurrentWeapon;
 }
+
+void UWeaponControllerComponet::CleanUp()
+{
+	for (int i = 0; i < GunSlots.Num(); i++)
+	{
+		if (MyGuns[i] != nullptr)
+		{
+			GetWorld()->DestroyActor(MyGuns[i]);
+			break;
+		}
+	}
+	CurrentWeapon = nullptr;
+}

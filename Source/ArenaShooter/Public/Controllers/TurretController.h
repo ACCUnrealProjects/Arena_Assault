@@ -5,14 +5,13 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Perception/AIPerceptionTypes.h"
-#include "ZombieAIController.generated.h"
-
+#include "TurretController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARENASHOOTER_API AZombieAIController : public AAIController
+class ARENASHOOTER_API ATurretController : public AAIController
 {
 	GENERATED_BODY()
 
@@ -25,7 +24,7 @@ private:
 
 	virtual void OnPossess(APawn* const InPawn) override;
 
-	UPROPERTY(EditInstanceOnly ,BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "AI")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "AI")
 	class UBehaviorTreeComponent* BehaviorTreeComp;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "AI")
@@ -46,7 +45,7 @@ protected:
 
 public:
 
-	AZombieAIController();
+	ATurretController();
 
 	//virtual void Tick(float DeltaTime) override;
 

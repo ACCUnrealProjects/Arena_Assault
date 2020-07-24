@@ -18,6 +18,8 @@ APistol::APistol()
 	MaxRecoilCounter = 10;
 	RecoilIncrease = 0.05f;
 
+	InfiniteAmmo = true;
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/MyStuff/Meshes/Pistol/Glock_Rigged.Glock_Rigged'"));
 	USkeletalMesh* Asset = MeshAsset.Object;
 	GunMesh->SetSkeletalMesh(Asset);

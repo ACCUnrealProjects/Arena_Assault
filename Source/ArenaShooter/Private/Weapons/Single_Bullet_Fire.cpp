@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "../Public/Weapons/Single_Bullet_Fire.h"
+#include "../Public/Projectile/TracerRound.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -28,6 +29,11 @@ void ASingle_Bullet_Fire::Fire(FVector FirePoint, FRotator FireDirRotator)
 	}
 	CurrentClipAmmo--;
 	RecoilCounter = FMath::Clamp<float>(RecoilCounter + RecoilIncrease, 0.1f, MaxRecoilCounter);
+
+	if (ProjectileBlueprint)
+	{
+		GetWorld()->SpawnActor<ATracerRound>(ProjectileBlueprint, Muzzle->GetComponentLocation(), FireDirRotator);
+	}
 }
 
 bool ASingle_Bullet_Fire::Reload()

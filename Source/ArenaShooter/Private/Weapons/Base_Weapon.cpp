@@ -13,7 +13,6 @@ ABase_Weapon::ABase_Weapon()
 	GunMesh->bCastDynamicShadow = false;
 	SetRootComponent(GunMesh);
 
-
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
 	Muzzle->SetupAttachment(GunMesh);
 
@@ -65,7 +64,10 @@ void ABase_Weapon::ReloadComplete()
 	int32 WantedBullets = ClipSize - CurrentClipAmmo;
 	BulletsWeCanAdd = FMath::Min(CurrentTotalAmmo, WantedBullets);
 	CurrentClipAmmo = CurrentClipAmmo + BulletsWeCanAdd;
-	CurrentTotalAmmo -= BulletsWeCanAdd;
+	if (!InfiniteAmmo)
+	{
+		CurrentTotalAmmo -= BulletsWeCanAdd;
+	}
 }
 
 void ABase_Weapon::OnAttach(AActor* MyOwner)

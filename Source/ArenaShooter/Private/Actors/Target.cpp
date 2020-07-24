@@ -12,8 +12,7 @@ ATarget::ATarget()
 
 	TargetMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TargetMesh"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAsset(TEXT("StaticMesh'/Game/MyStuff/Meshes/Objects/Target.Target'"));
-	UStaticMesh* Asset = MeshAsset.Object;
-	TargetMesh->SetStaticMesh(Asset);
+	TargetMesh->SetStaticMesh(MeshAsset.Object);
 	SetRootComponent(TargetMesh);
 
 	MyHealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));

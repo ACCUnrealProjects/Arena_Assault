@@ -30,9 +30,8 @@ protected:
 public:	
 
 	void ShootGrappleGun(FVector GrappleStartPos, FRotator GrappleDir);
-
 	void EndGrappleShoot();
-
 	void AddGrappleGun();
 		
+	void CleanUp();
 };
