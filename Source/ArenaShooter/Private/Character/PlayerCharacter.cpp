@@ -20,7 +20,7 @@ APlayerCharacter::APlayerCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetCapsuleComponent()->SetCapsuleSize(55.f, 90.0f);
+	GetCapsuleComponent()->SetCapsuleSize(40.0f, 90.0f);
 
 	WallRunCap = CreateDefaultSubobject<UCapsuleComponent>(TEXT("WallRunCapsule"));
 	WallRunCap->SetCapsuleSize(60.0f, 90.0f);
@@ -113,7 +113,7 @@ void APlayerCharacter::WallRunning(float DeltaSeconds)
 		{
 			WallRunDir *= -1;
 		}
-		MyMoveComp->GravityScale = 0.5f;
+		MyMoveComp->GravityScale = 0.35f;
 		MyMoveComp->Velocity.Z = 0;
 		float CamRollCheck = FVector::DotProduct(WallRayCast.Normal, GetActorRightVector());
 		if (CamRollCheck >= 0)

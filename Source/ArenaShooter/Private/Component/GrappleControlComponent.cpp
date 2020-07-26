@@ -55,6 +55,7 @@ void UGrappleControlComponent::AddGrappleGun()
 
 void UGrappleControlComponent::CleanUp()
 {
+	if (!MyGrappleGun) { return; }
 	GetWorld()->DestroyActor(MyGrappleGun);
 	MyGrappleGun = nullptr;
 }

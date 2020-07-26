@@ -3,7 +3,6 @@
 #include "../Public/Controllers/TurretController.h"
 #include "../Public/Component/HealthComponent.h"
 #include "../Public/Enemy/Turret.h"
-#include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -18,10 +17,7 @@ ATurretController::ATurretController()
 	{
 		BehaviorTree = obj.Object;
 	}
-	BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComp"));
-	BlackBoardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 	SetupPerceptionSystem();
-
 }
 
 void ATurretController::OnTargetDetected(AActor* actor, FAIStimulus const stimulus)
@@ -34,13 +30,13 @@ void ATurretController::OnTargetDetected(AActor* actor, FAIStimulus const stimul
 
 void ATurretController::SetupPerceptionSystem()
 {
-	AISightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AI Sight"));
-	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Comp")));
-	AISightConfig->SightRadius = 1000.0f;
+	AEnemyController::SetupPerceptionSystem();
+
+	AISightConfig->SightRadius = 2000.0f;
 	AISightConfig->LoseSightRadius = AISightConfig->SightRadius * 1.1f;
 	AISightConfig->PeripheralVisionAngleDegrees = 360.0f;
 	AISightConfig->SetMaxAge(2.0f);
-	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 900.0f;
+	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 2500.0f;
 	AISightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	AISightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	AISightConfig->DetectionByAffiliation.bDetectNeutrals = true;
@@ -52,23 +48,17 @@ void ATurretController::SetupPerceptionSystem()
 
 void ATurretController::BeginPlay()
 {
-	Super::BeginPlay();
-	RunBehaviorTree(BehaviorTree);
-	BehaviorTreeComp->StartTree(*BehaviorTree);
+	AEnemyController::BeginPlay();
 }
 
 void ATurretController::OnPossess(APawn* const InPawn)
 {
-	Super::OnPossess(InPawn);
-	if (BlackBoardComp)
-	{
-		BlackBoardComp->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	}
+	AEnemyController::OnPossess(InPawn);
 }
 
 void ATurretController::SetPawn(APawn* const InPawn)
 {
-	Super::SetPawn(InPawn);
+	AEnemyController::SetPawn(InPawn);
 
 	if (InPawn)
 	{
@@ -85,8 +75,4 @@ void ATurretController::PawnHasDiedListener()
 	GetWorld()->DestroyActor(GetPawn());
 }
 
-UBlackboardComponent* ATurretController::GetBlackboard() const
-{
-	return BlackBoardComp;
-}
 

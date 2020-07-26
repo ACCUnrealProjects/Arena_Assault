@@ -35,6 +35,7 @@ AZombie::AZombie()
 	bUseControllerRotationYaw = false;
 	MyMoveComp->bUseControllerDesiredRotation = true;
 	MyMoveComp->bOrientRotationToMovement = true;
+	MyMoveComp->MaxWalkSpeed = 200.0f;
 
 	SetUpMyStimulis();
 }

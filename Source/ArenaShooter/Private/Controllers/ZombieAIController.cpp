@@ -18,8 +18,6 @@ AZombieAIController::AZombieAIController()
 	{
 		BehaviorTree = obj.Object;
 	}
-	BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComp"));
-	BlackBoardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 	SetupPerceptionSystem();
 
 }
@@ -34,13 +32,13 @@ void AZombieAIController::OnTargetDetected(AActor* actor, FAIStimulus const stim
 
 void AZombieAIController::SetupPerceptionSystem()
 {
-	AISightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AI Sight"));
-	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Comp")));
-	AISightConfig->SightRadius = 1000.0f;
+	AEnemyController::SetupPerceptionSystem();
+
+	AISightConfig->SightRadius = 2000.0f;
 	AISightConfig->LoseSightRadius = AISightConfig->SightRadius * 1.1f;
 	AISightConfig->PeripheralVisionAngleDegrees = 360.0f;
 	AISightConfig->SetMaxAge(5.0f);
-	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 900.0f;
+	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 2500.0f;
 	AISightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	AISightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	AISightConfig->DetectionByAffiliation.bDetectNeutrals = true;
@@ -52,23 +50,17 @@ void AZombieAIController::SetupPerceptionSystem()
 
 void AZombieAIController::BeginPlay()
 {
-	Super::BeginPlay();
-	RunBehaviorTree(BehaviorTree);
-	BehaviorTreeComp->StartTree(*BehaviorTree);
+	AEnemyController::BeginPlay();
 }
 
 void AZombieAIController::OnPossess(APawn* const InPawn)
 {
-	Super::OnPossess(InPawn);
-	if (BlackBoardComp)
-	{
-		BlackBoardComp->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	}
+	AEnemyController::OnPossess(InPawn);
 }
 
 void AZombieAIController::SetPawn(APawn* const InPawn)
 {
-	Super::SetPawn(InPawn);
+	AEnemyController::SetPawn(InPawn);
 
 	if (InPawn)
 	{
@@ -82,10 +74,5 @@ void AZombieAIController::PawnHasDiedListener()
 {
 	if (!GetPawn()) { return; }
 	GetWorld()->DestroyActor(GetPawn());
-}
-
-UBlackboardComponent* AZombieAIController::GetBlackboard() const
-{
-	return BlackBoardComp;
 }
 

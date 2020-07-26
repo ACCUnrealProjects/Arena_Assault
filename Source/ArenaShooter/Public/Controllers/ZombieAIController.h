@@ -3,20 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AIController.h"
-#include "Perception/AIPerceptionTypes.h"
+#include "../Public/Controllers/EnemyController.h"
 #include "ZombieAIController.generated.h"
-
 
 /**
  * 
  */
 UCLASS()
-class ARENASHOOTER_API AZombieAIController : public AAIController
+class ARENASHOOTER_API AZombieAIController : public AEnemyController
 {
 	GENERATED_BODY()
 
 private:
+
+protected:
+
+	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void PawnHasDiedListener();
@@ -25,31 +27,15 @@ private:
 
 	virtual void OnPossess(APawn* const InPawn) override;
 
-	UPROPERTY(EditInstanceOnly ,BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "AI")
-	class UBehaviorTreeComponent* BehaviorTreeComp;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "AI")
-	class UBehaviorTree* BehaviorTree;
-
-	class UBlackboardComponent* BlackBoardComp;
-
-	class UAISenseConfig_Sight* AISightConfig;
-
 	UFUNCTION()
 	void OnTargetDetected(AActor* actor, FAIStimulus const stimulus);
 
-	void SetupPerceptionSystem();
-
-protected:
-
-	virtual void BeginPlay() override;
+	virtual void SetupPerceptionSystem() override;
 
 public:
 
 	AZombieAIController();
 
 	//virtual void Tick(float DeltaTime) override;
-
-	class UBlackboardComponent* GetBlackboard() const;
 	
 };
