@@ -16,7 +16,7 @@ class ARENASHOOTER_API UIsTargetInMeleeRange : public UBTService_BlackboardBase
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	float MeleeRange = 25.0f;
+	float MeleeRange = 200.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Blackboard", meta = (AllowPrivateAccess = "true"))
 	struct FBlackboardKeySelector InRangeBool;
@@ -27,6 +27,6 @@ protected:
 public:
 	UIsTargetInMeleeRange();
 
-	virtual void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 };

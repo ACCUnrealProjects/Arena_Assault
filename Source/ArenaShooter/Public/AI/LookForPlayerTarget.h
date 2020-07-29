@@ -16,12 +16,6 @@ class ARENASHOOTER_API ULookForPlayerTarget : public UBTService_BlackboardBase
 	
 private:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	float FoundSpeed = 600.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	float LostSpeed = 200.0f;
-
 	UPROPERTY(EditAnywhere, Category = "Blackboard", meta = (AllowPrivateAccess = "true"))
 	struct FBlackboardKeySelector CanSeePlayerBool;
 

@@ -34,5 +34,4 @@ public:
 	void AimToTarget(FVector TargetPosition);
 
 	bool CloseToHittingTarget(FVector TargetPosition);
-		
 };

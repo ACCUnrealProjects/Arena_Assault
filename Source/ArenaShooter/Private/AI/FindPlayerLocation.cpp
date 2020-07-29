@@ -2,7 +2,7 @@
 
 
 #include "../Public/AI/FindPlayerLocation.h"
-#include "../Public/Controllers/ZombieAIController.h"
+#include "../Public/Controllers/EnemyController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -17,8 +17,8 @@ UFindPlayerLocation::UFindPlayerLocation()
 
 EBTNodeResult::Type UFindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)
 {
-	auto const AiControl = Cast<AZombieAIController>(owner_comp.GetAIOwner());
-	auto const PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	AEnemyController* const AiControl = Cast<AEnemyController>(owner_comp.GetAIOwner());
+	APawn* const PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	
 	FVector const PlayerPos = PlayerPawn->GetActorLocation();
 

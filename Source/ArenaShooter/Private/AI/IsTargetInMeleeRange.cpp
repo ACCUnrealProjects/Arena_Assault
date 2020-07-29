@@ -1,26 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "..\..\Public\AI\IsTargetInMeleeRange.h"
+#include "../Public/AI/IsTargetInMeleeRange.h"
+#include "../Public/Controllers/EnemyController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 #include "GameFramework/Character.h"
-#include "../Public/Controllers/ZombieAIController.h"
 
 UIsTargetInMeleeRange::UIsTargetInMeleeRange()
 {
-	bNotifyBecomeRelevant = true;
+	bNotifyTick = true;
 	NodeName = TEXT("Target In Melee Range");
 }
 
-void UIsTargetInMeleeRange::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+void UIsTargetInMeleeRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::OnBecomeRelevant(OwnerComp, NodeMemory);
+	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	AZombieAIController* const MyZombieAI = Cast<AZombieAIController>(OwnerComp.GetAIOwner());
+	AEnemyController* const MyZombieAI = Cast<AEnemyController>(OwnerComp.GetAIOwner());
 	APawn* const Zombie = MyZombieAI->GetPawn();
 
 	AActor* const TargetActor = Cast<AActor>(MyZombieAI->GetBlackboard()->GetValueAsObject(GetSelectedBlackboardKey()));
 
-	MyZombieAI->GetBlackboard()->SetValueAsBool(InRangeBool.SelectedKeyName, Zombie->GetDistanceTo(TargetActor) <= MeleeRange);
+	bool TargetInMelee = Zombie->GetDistanceTo(TargetActor) <= MeleeRange;
+
+	MyZombieAI->GetBlackboard()->SetValueAsBool(InRangeBool.SelectedKeyName, TargetInMelee);
 }

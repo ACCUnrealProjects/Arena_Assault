@@ -26,8 +26,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	class UBarrelMesh* MyBarrel = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* FireSound = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects", meta = (AllowPrivateAccess = "true"))
-	class UParticleSystemComponent* FireEffect = nullptr;
+	class UParticleSystemComponent* TurretFireEffect = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects", meta = (AllowPrivateAccess = "true"))
 	class UParticleSystem* HitEffect = nullptr;
 
@@ -62,5 +65,7 @@ public:
 	void Fire(AActor* Target);
 
 	void AimAt(AActor* Target);
+
+	bool AmILookingAtTargetDir(FVector Direction);
 
 };

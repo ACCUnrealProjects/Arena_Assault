@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "ChasePlayer.generated.h"
+#include "TurretFireAtTarget.generated.h"
 
 /**
  * 
  */
-UCLASS(Blueprintable)
-class ARENASHOOTER_API UChasePlayer : public UBTTask_BlackboardBase
+UCLASS()
+class ARENASHOOTER_API UTurretFireAtTarget : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
@@ -20,7 +20,8 @@ protected:
 
 public:
 
-	UChasePlayer();
+	UTurretFireAtTarget();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
+	
 };

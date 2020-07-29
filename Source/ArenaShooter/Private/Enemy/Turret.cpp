@@ -29,18 +29,16 @@ ATurret::ATurret()
 	MyTurret = CreateDefaultSubobject<UTurretMesh>(TEXT("MyTurret"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> TurretAsset(TEXT("StaticMesh'/Game/MyStuff/Meshes/Turret/mortar_dome.mortar_dome'"));
 	MyTurret->SetStaticMesh(TurretAsset.Object);
-	MyTurret->AttachTo(Body, "Turret", EAttachLocation::SnapToTarget);
-	MyTurret->bEditableWhenInherited = true;
+	MyTurret->AttachToComponent(Body, FAttachmentTransformRules::SnapToTargetIncludingScale, "Turret");
 
 	MyBarrel = CreateDefaultSubobject<UBarrelMesh>(TEXT("MyBarrel"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> BarrelAsset(TEXT("StaticMesh'/Game/MyStuff/Meshes/Turret/mortar_barrel.mortar_barrel'"));
 	MyBarrel->SetStaticMesh(BarrelAsset.Object);
-	MyBarrel->AttachTo(MyTurret, "Barrel", EAttachLocation::SnapToTarget);
-	MyBarrel->bEditableWhenInherited = true;
+	MyBarrel->AttachToComponent(MyTurret, FAttachmentTransformRules::SnapToTargetIncludingScale, "Barrel");
 
-	FireEffect = CreateDefaultSubobject<UParticleSystemComponent>(FName("Fire Effect"));
-	//FireEffect->AttachToComponent(Muzzle, FAttachmentTransformRules::KeepRelativeTransform);
-	//FireEffect->bAutoActivate = false;
+	TurretFireEffect = CreateDefaultSubobject<UParticleSystemComponent>(FName("Fire Effect"));
+	TurretFireEffect->AttachToComponent(MyBarrel, FAttachmentTransformRules::KeepRelativeTransform, ("FireLocation"));
+	TurretFireEffect->bAutoActivate = false;
 
 	HitEffect = CreateDefaultSubobject<UParticleSystem>(FName("Hit Effect"));
 }
@@ -73,6 +71,8 @@ void ATurret::Fire(AActor* Target)
 	FCollisionQueryParams ShotParams;
 	ShotParams.AddIgnoredActor(this);
 
+	TurretFireEffect->Activate();
+
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
 		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), Damage, GetController(), this, UDamageType::StaticClass());
@@ -83,13 +83,34 @@ void ATurret::Fire(AActor* Target)
 	{
 		GetWorld()->SpawnActor<ATracerRound>(ProjectileBlueprint, MyBarrel->GetSocketLocation(FName("FireLocation")), MyBarrel->GetSocketRotation(FName("FireLocation")));
 	}
-	
 
+	if (FireSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, FireSound, MyBarrel->GetSocketLocation(FName("FireLocation")));
+	}
+
+	CanFire = false;
+	FTimerHandle FireTimer;
+	GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ATurret::SetCanFireTrue, FireRate, false);
 }
 
 void ATurret::AimAt(AActor* Target)
 {
 	MyAimingComp->AimToTarget(Target->GetActorLocation());
+}
+
+bool ATurret::AmILookingAtTargetDir(FVector Direction)
+{
+	FVector LocationInDirection = (Direction * 100) + MyTurret->GetComponentLocation();
+
+	MyAimingComp->AimToTarget(LocationInDirection);
+
+	if (MyAimingComp->CloseToHittingTarget(LocationInDirection))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void ATurret::SetCanFireTrue()
