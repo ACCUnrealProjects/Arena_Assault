@@ -28,10 +28,10 @@ void UTurretAimingComponent::AimToTarget(FVector TargetPosition)
 {
 	if (!ActorTurretMesh || !ActorBarrelMesh) { return; }
 
-	FVector ToTarget = TargetPosition - ActorTurretMesh->GetComponentLocation();
+	FVector ToTarget = TargetPosition - ActorBarrelMesh->GetComponentLocation();
 	ToTarget = ToTarget.GetSafeNormal();
 	FRotator DirectionRotation = ToTarget.Rotation();
-	FRotator DesiredChange = DirectionRotation - ActorTurretMesh->GetForwardVector().Rotation();
+	FRotator DesiredChange = DirectionRotation - ActorBarrelMesh->GetForwardVector().Rotation();
 	ActorBarrelMesh->RotateBarrel(DesiredChange.Pitch);
 	if (DesiredChange.Yaw > 180)
 	{

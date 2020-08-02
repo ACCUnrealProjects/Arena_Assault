@@ -16,7 +16,7 @@ class ARENASHOOTER_API AShotgun : public ABase_Weapon
 
 private:
 
-	int PelletsPerShot = 6;
+	int32 PelletsPerShot = 6;
 
 protected:
 

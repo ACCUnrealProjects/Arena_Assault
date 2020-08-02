@@ -51,6 +51,7 @@ public:
 	void AddGun(TSubclassOf<ABase_Weapon> NewWeapon, GunType myWeaponType);
 	void SetAttachSkel(USkeletalMeshComponent* AttachWeaponTo, FString PointToAttachTo);
 	bool DoIAlreadyHaveGun(GunType NewGunType);
+	bool TryAndAddAmmoForGun(GunType GunT, int32 AmmoAmmount);
 
 	//Get current gun
 	ABase_Weapon* GetCurrentGun();

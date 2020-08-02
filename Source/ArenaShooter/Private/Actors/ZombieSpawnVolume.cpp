@@ -54,7 +54,7 @@ void AZombieSpawnVolume::SpawnZombies()
 	uint8 ZombieDrop = FMath::RandRange(0, 100);
 	if (ZombieDrop <= DropChance)
 	{
-		int DropPicked = FMath::RandRange(0, Drops.Num()- 1);
+		int32 DropPicked = FMath::RandRange(0, Drops.Num()- 1);
 		//pass drop to zombie to spawn when it dies
 	}
 

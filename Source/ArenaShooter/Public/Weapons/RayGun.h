@@ -24,4 +24,6 @@ public:
 
 	virtual void OnAttach(AActor* MyOwner) override;
 
+	void DeActivateLaser();
+
 };

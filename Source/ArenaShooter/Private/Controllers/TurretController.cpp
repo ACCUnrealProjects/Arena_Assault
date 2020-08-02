@@ -35,8 +35,8 @@ void ATurretController::SetupPerceptionSystem()
 	AISightConfig->SightRadius = 2000.0f;
 	AISightConfig->LoseSightRadius = AISightConfig->SightRadius * 1.1f;
 	AISightConfig->PeripheralVisionAngleDegrees = 360.0f;
-	AISightConfig->SetMaxAge(2.0f);
-	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 2500.0f;
+	AISightConfig->SetMaxAge(0.1f);
+	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 100.0f;
 	AISightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	AISightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	AISightConfig->DetectionByAffiliation.bDetectNeutrals = true;

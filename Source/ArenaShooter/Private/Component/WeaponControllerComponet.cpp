@@ -38,7 +38,7 @@ void UWeaponControllerComponet::FireCurrentWeapon(FVector FirePoint, FRotator Fi
 
 		UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
 		GunType MyGunType = CurrentWeapon->GetGunType();
-		if (AnimInstance && FireAnimations[MyGunType])
+		if (AnimInstance && FireAnimations.Contains(MyGunType))
 		{
 			AnimInstance->Montage_Play(FireAnimations[MyGunType]);
 		}
@@ -57,8 +57,8 @@ void UWeaponControllerComponet::StopFire()
 
 void UWeaponControllerComponet::ChangeGun(GunType SwitchGunType)
 {
-	int GunSlot = 0;
-	for (int i = 0; i < GunSlots.Num(); i++)
+	int32 GunSlot = 0;
+	for (int32 i = 0; i < GunSlots.Num(); i++)
 	{
 		if (GunSlots[i] == SwitchGunType)
 		{
@@ -85,7 +85,7 @@ void UWeaponControllerComponet::Reload()
 		{
 			UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
 			GunType MyGunType = CurrentWeapon->GetGunType();
-			if (AnimInstance && ReloadAnimations[MyGunType])
+			if (AnimInstance && ReloadAnimations.Contains(MyGunType))
 			{
 				AnimInstance->Montage_Play(ReloadAnimations[MyGunType]);
 			}
@@ -100,8 +100,8 @@ void UWeaponControllerComponet::AddGun(TSubclassOf<ABase_Weapon> NewWeapon, GunT
 	if (!NewGun) { return; }
 	NewGun->FindComponentByClass<USkeletalMeshComponent>()->AttachToComponent(WeaponAttachSkel, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), FName(PointInSkel));
 	NewGun->OnAttach(GetOwner());
-	int GunSlot = 0;
-	for (int i = 0; i < GunSlots.Num(); i++)
+	int32 GunSlot = 0;
+	for (int32 i = 0; i < GunSlots.Num(); i++)
 	{
 		if (GunSlots[i] == myWeaponType)
 		{
@@ -117,6 +117,22 @@ void UWeaponControllerComponet::AddGun(TSubclassOf<ABase_Weapon> NewWeapon, GunT
 	CurrentWeapon = NewGun;
 }
 
+bool UWeaponControllerComponet::TryAndAddAmmoForGun(GunType GunT, int32 AmmoAmmount)
+{
+	for (int32 i = 0; i < GunSlots.Num(); i++)
+	{
+		if (GunSlots[i] == GunT)
+		{
+			if (MyGuns[i] == nullptr) { return false; }
+
+			MyGuns[i]->AddAmmo(AmmoAmmount);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void UWeaponControllerComponet::SetAttachSkel(USkeletalMeshComponent* AttachWeaponTo, FString PointToAttachTo)
 {
 	WeaponAttachSkel = AttachWeaponTo;
@@ -125,7 +141,7 @@ void UWeaponControllerComponet::SetAttachSkel(USkeletalMeshComponent* AttachWeap
 
 bool UWeaponControllerComponet::DoIAlreadyHaveGun(GunType NewGunType)
 {
-	for (int i = 0; i < GunSlots.Num(); i++)
+	for (int32 i = 0; i < GunSlots.Num(); i++)
 	{
 		if (GunSlots[i] == NewGunType)
 		{
@@ -143,7 +159,7 @@ ABase_Weapon* UWeaponControllerComponet::GetCurrentGun()
 
 void UWeaponControllerComponet::CleanUp()
 {
-	for (int i = 0; i < GunSlots.Num(); i++)
+	for (int32 i = 0; i < GunSlots.Num(); i++)
 	{
 		if (MyGuns[i] != nullptr)
 		{

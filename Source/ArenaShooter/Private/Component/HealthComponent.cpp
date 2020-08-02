@@ -51,8 +51,8 @@ float UHealthComponent::GetHealthPercentage() const
 
 void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	int intDamage = FPlatformMath::RoundToInt(Damage);
-	intDamage = FMath::Clamp<int>(intDamage, 0, Health);
+	int32 intDamage = FPlatformMath::RoundToInt(Damage);
+	intDamage = FMath::Clamp<int32>(intDamage, 0, Health);
 	Health -= intDamage;
 
 	if (Health <= 0)

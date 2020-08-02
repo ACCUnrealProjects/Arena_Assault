@@ -17,7 +17,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage", meta = (AllowPrivateAccess = "true"))
 	float PunchCoolDown = 1.5f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage", meta = (AllowPrivateAccess = "true"))
-	int PunchDamage = 10.0f;
+	int32 PunchDamage = 10.0f;
 
 	bool CanPunch = true;
 
