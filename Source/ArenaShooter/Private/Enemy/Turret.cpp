@@ -49,6 +49,7 @@ void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
 	MyAimingComp->SetUp(MyTurret, MyBarrel);
+	MyHealthComp->IHaveDied.AddUniqueDynamic(this, &ATurret::Death);
 }
 
 // Called every frame
@@ -77,7 +78,10 @@ void ATurret::Fire(AActor* Target)
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
 		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), Damage, GetController(), this, UDamageType::StaticClass());
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, ShotHit.ImpactPoint, ShotHit.ImpactNormal.Rotation());
+		if (HitEffect)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, ShotHit.ImpactPoint, ShotHit.ImpactNormal.Rotation());
+		}
 	}
 
 	if (ProjectileBlueprint)
@@ -117,4 +121,17 @@ bool ATurret::AmILookingAtTargetDir(FVector Direction)
 void ATurret::SetCanFireTrue()
 {
 	CanFire = true;
+}
+
+void ATurret::Death()
+{
+	if (ExplotionSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ExplotionSound, GetActorLocation());
+	}
+	if (HitEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathExplotion, MyTurret->GetComponentLocation(), GetActorRotation());
+	}
+	Destroy();
 }

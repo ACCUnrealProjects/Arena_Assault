@@ -41,7 +41,10 @@ void ABase_Weapon::Fire(FVector FirePoint, FRotator FireDirRotator)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
-	FireEffect->Activate();
+	if (FireEffect)
+	{
+		FireEffect->Activate();
+	}
 }
 
 bool ABase_Weapon::Reload()

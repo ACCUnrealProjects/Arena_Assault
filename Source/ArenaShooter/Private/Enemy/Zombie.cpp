@@ -2,6 +2,7 @@
 
 #include "../Public/Enemy/Zombie.h"
 #include "../Public/Component/HealthComponent.h"
+#include "../Public/PickUps/PickUps.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_sight.h"
@@ -53,6 +54,8 @@ void AZombie::BeginPlay()
 	Super::BeginPlay();
 
 	MyHealthComp->SetMaxHealth(30);
+	MyHealthComp->IHaveDied.AddUniqueDynamic(this, &AZombie::Death);
+	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &AZombie::ImHit);
 }
 
 // Called every frame
@@ -77,7 +80,59 @@ void AZombie::MeleeAttack(AActor* target)
 
 }
 
+void AZombie::SetDrop(TSubclassOf<class APickUps> MyDrop)
+{
+	Drop = MyDrop;
+}
+
 void AZombie::PunchCooldownComplete()
 {
 	CanPunch = true;
+}
+
+void AZombie::ImHit()
+{
+	//play hit sound
+}
+
+void AZombie::RagDoll()
+{
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->WakeAllRigidBodies();
+	GetMesh()->bBlendPhysics = true;
+}
+
+void AZombie::Death()
+{
+	if (IsDying) { return; }
+	IsDying = true;
+
+	DetachFromControllerPendingDestroy();
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SetActorEnableCollision(true);
+
+	MyHealthComp->SetComponentTickEnabled(false);
+
+	MyMoveComp->StopMovementImmediately();
+	MyMoveComp->DisableMovement();
+	MyMoveComp->SetComponentTickEnabled(false);
+
+	RagDoll();
+
+	if (Drop)
+	{
+		GetWorld()->SpawnActor<APickUps>(Drop, GetActorLocation(), GetActorRotation());
+	}
+
+	FTimerHandle DeathTimer;
+	GetWorld()->GetTimerManager().SetTimer(DeathTimer, this, &AZombie::DestroyMe, 2.0f, false);
+}
+
+void AZombie::DestroyMe()
+{
+	Destroy();
 }

@@ -55,7 +55,7 @@ void AZombieSpawnVolume::SpawnZombies()
 	if (ZombieDrop <= DropChance)
 	{
 		int32 DropPicked = FMath::RandRange(0, Drops.Num()- 1);
-		//pass drop to zombie to spawn when it dies
+		NewZombie->SetDrop(Drops[DropPicked]);
 	}
 
 	GetWorld()->GetTimerManager().SetTimer(SpawnTimeHandler, this, &AZombieSpawnVolume::SpawnZombies, FMath::FRandRange(SpawnTimerLow, SpawnTimerHigh), false);

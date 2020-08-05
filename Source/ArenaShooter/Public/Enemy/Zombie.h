@@ -33,9 +33,17 @@ private:
 	void SetUpMyStimulis();
 	void PunchCooldownComplete();
 
+	TSubclassOf<class APickUps> Drop = nullptr;
+
+	bool IsDying = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void RagDoll();
+
+	void DestroyMe();
 
 public:	
 
@@ -46,5 +54,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void MeleeAttack(AActor* Target);
+
+	void SetDrop(TSubclassOf<class APickUps> MyDrop);
+
+	UFUNCTION()
+	void ImHit();
+
+	UFUNCTION()
+	void Death();
 
 };

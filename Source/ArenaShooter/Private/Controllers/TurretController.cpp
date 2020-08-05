@@ -60,12 +60,12 @@ void ATurretController::SetPawn(APawn* const InPawn)
 {
 	AEnemyController::SetPawn(InPawn);
 
-	if (InPawn)
+	/*if (InPawn)
 	{
 		UHealthComponent* PawnsHealthCon = InPawn->FindComponentByClass<UHealthComponent>();
 		if (!ensure(PawnsHealthCon)) { return; }
 		PawnsHealthCon->IHaveDied.AddUniqueDynamic(this, &ATurretController::PawnHasDiedListener);
-	}
+	}*/
 }
 
 

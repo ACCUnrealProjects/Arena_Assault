@@ -27,8 +27,13 @@ private:
 	float SpawnTimerHigh = 1.5f;
 	FTimerHandle SpawnTimeHandler;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
+	int32 SpawnNumber = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	uint8 DropChance = 10;
+
+	bool isSpawning = false;
 
 protected:
 	// Called when the game starts or when spawned

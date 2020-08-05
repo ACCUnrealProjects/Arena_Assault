@@ -60,8 +60,11 @@ void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
 		{
 			UGameplayStatics::ApplyDamage(ShotHits[i].GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, ShotHits[i].ImpactPoint, ShotHits[i].ImpactNormal.Rotation());
-			//DrawDebugLine(GetWorld(), FirePoint, ShotHit.ImpactPoint, FColor(0, 255, 0), true, 0, 0, 10);
 			LastHitPos = ShotHits[i].ImpactPoint;
+			if (ShotHits[i].GetComponent() && ShotHits[i].GetComponent()->GetCollisionObjectType() == ECollisionChannel::ECC_WorldStatic)
+			{
+				break;
+			}
 		}
 	}
 	CurrentClipAmmo--;
@@ -83,5 +86,8 @@ void ARayGun::OnAttach(AActor* MyOwner)
 
 void ARayGun::DeActivateLaser()
 {
-	FireEffect->Deactivate();
+	if (FireEffect)
+	{
+		FireEffect->Deactivate();
+	}
 }

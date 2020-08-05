@@ -73,6 +73,5 @@ void AZombieAIController::SetPawn(APawn* const InPawn)
 void AZombieAIController::PawnHasDiedListener()
 {
 	if (!GetPawn()) { return; }
-	GetWorld()->DestroyActor(GetPawn());
 }
 
