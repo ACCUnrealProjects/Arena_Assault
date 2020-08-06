@@ -32,10 +32,6 @@ void AShotgun::Fire(FVector FirePoint, FRotator FireDirRotator)
 	FHitResult ShotHit;
 	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * Range);
 
-	FCollisionQueryParams ShotParams;
-	ShotParams.AddIgnoredActor(this);
-	ShotParams.AddIgnoredActor(GunOwner);
-
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
 		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());

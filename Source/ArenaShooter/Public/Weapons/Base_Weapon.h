@@ -43,6 +43,8 @@ private:
 
 protected:
 
+	FCollisionQueryParams ShotParams;
+
 	UPROPERTY(BlueprintReadOnly, Category = "WeaponType")
 	GunType myWeaponType = GunType::None;
 

@@ -35,6 +35,11 @@ ARayGun::ARayGun()
 
 	FireEffect->SetBeamSourcePoint(0, Muzzle->GetComponentLocation(), 0);
 	FireEffect->SetBeamEndPoint(0, Muzzle->GetComponentLocation());
+
+	WhatToHit.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	WhatToHit.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	WhatToHit.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	WhatToHit.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
 }
 
 void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
@@ -43,15 +48,6 @@ void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
 
 	TArray<FHitResult> ShotHits;
 	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * Range);
-
-	FCollisionQueryParams ShotParams;
-	ShotParams.AddIgnoredActor(this);
-	ShotParams.AddIgnoredActor(GunOwner);
-
-	FCollisionObjectQueryParams WhatToHit;
-	WhatToHit.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-	WhatToHit.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-	WhatToHit.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
 
 	FVector LastHitPos = RayEnd;
 	if (GetWorld()->LineTraceMultiByObjectType(ShotHits, FirePoint, RayEnd, WhatToHit, ShotParams))
@@ -73,6 +69,7 @@ void ARayGun::Fire(FVector FirePoint, FRotator FireDirRotator)
 	FireEffect->SetVectorParameter("Target", LastHitPos);
 	FireEffect->SetBeamSourcePoint(0, Muzzle->GetComponentLocation(), 0);
 	FireEffect->SetBeamEndPoint(0, LastHitPos);
+
 	FTimerHandle Temp;
 	GetWorld()->GetTimerManager().SetTimer(Temp, this, &ARayGun::DeActivateLaser, 0.1f, false);
 }

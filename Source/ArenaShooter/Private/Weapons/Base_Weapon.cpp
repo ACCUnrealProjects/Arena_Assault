@@ -27,6 +27,8 @@ void ABase_Weapon::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ShotParams.AddIgnoredActor(this);
+
 	CurrentTotalAmmo = MaxAmmo - ClipSize;
 	CurrentClipAmmo = ClipSize;
 }
@@ -76,6 +78,7 @@ void ABase_Weapon::ReloadComplete()
 void ABase_Weapon::OnAttach(AActor* MyOwner)
 {
 	GunOwner = MyOwner;
+	ShotParams.AddIgnoredActor(GunOwner);
 }
 
 void ABase_Weapon::StopFire()

@@ -18,10 +18,6 @@ void ASingle_Bullet_Fire::Fire(FVector FirePoint, FRotator FireDirRotator)
 	FireDirRotator += FRotator(FMath::RandRange(-RecoilCounter, RecoilCounter), FMath::RandRange(-RecoilCounter, RecoilCounter), 0);
 	FVector RayEnd = FirePoint + (FireDirRotator.Vector() * Range);
 
-	FCollisionQueryParams ShotParams;
-	ShotParams.AddIgnoredActor(this);
-	ShotParams.AddIgnoredActor(GunOwner);
-
 	if (GetWorld()->LineTraceSingleByChannel(ShotHit, FirePoint, RayEnd, ECollisionChannel::ECC_Camera, ShotParams))
 	{
 		UGameplayStatics::ApplyDamage(ShotHit.GetActor(), DamagePerShot, Cast<APawn>(GunOwner)->GetController(), GunOwner, UDamageType::StaticClass());

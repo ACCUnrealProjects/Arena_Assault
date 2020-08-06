@@ -32,7 +32,7 @@ void ATurretController::SetupPerceptionSystem()
 {
 	AEnemyController::SetupPerceptionSystem();
 
-	AISightConfig->SightRadius = 2000.0f;
+	AISightConfig->SightRadius = 5000.0f;
 	AISightConfig->LoseSightRadius = AISightConfig->SightRadius * 1.1f;
 	AISightConfig->PeripheralVisionAngleDegrees = 360.0f;
 	AISightConfig->SetMaxAge(0.1f);
