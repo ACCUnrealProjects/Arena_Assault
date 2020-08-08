@@ -51,7 +51,7 @@ float UHealthComponent::GetHealthPercentage() const
 
 bool UHealthComponent::AmIAtMaxHealth() const
 {
-	return (float)Health / (float)MaxHealth == 1;
+	return Health == MaxHealth;
 }
 
 void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
