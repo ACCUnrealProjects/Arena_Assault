@@ -49,6 +49,11 @@ float UHealthComponent::GetHealthPercentage() const
 	return (float)Health / (float)MaxHealth;
 }
 
+bool UHealthComponent::AmIAtMaxHealth() const
+{
+	return (float)Health / (float)MaxHealth == 1;
+}
+
 void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	int32 intDamage = FPlatformMath::RoundToInt(Damage);

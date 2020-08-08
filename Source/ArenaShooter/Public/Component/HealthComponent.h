@@ -39,6 +39,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 
+	bool AmIAtMaxHealth() const;
+
 	UFUNCTION()
 	void TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 

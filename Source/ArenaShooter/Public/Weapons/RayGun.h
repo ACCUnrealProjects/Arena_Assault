@@ -14,7 +14,7 @@ class ARENASHOOTER_API ARayGun : public ABase_Weapon
 	
 private:
 
-	FCollisionObjectQueryParams WhatToHit;;
+	FCollisionObjectQueryParams WhatToHit;
 
 protected:
 
