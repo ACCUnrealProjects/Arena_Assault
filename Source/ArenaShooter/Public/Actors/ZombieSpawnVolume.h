@@ -29,10 +29,12 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	int32 SpawnNumber = 10;
+	int32 ToSpawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	uint8 DropChance = 10;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	bool isSpawning = false;
 
 protected:

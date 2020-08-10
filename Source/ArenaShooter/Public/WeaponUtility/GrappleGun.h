@@ -34,7 +34,7 @@ private:
 	float GrappleRange = 5000.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties", meta = (AllowPrivateAccess = "true"))
-	float GrapplePullForce = 20.0f;
+	float GrapplePullForce = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleMesh", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* GrappleShooter = nullptr;
@@ -49,7 +49,7 @@ protected:
 
 	AActor* GrappleEndActor = nullptr;
 
-	AActor* ActorGrappleHit = nullptr;
+	TWeakObjectPtr<AActor> ActorGrappleHit = nullptr;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

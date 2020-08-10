@@ -20,6 +20,7 @@ private:
 	int32 PunchDamage = 10.0f;
 
 	bool CanPunch = true;
+	bool IsDying = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealthComponent", meta = (AllowPrivateAccess = "true"))
 	class UHealthComponent* MyHealthComp = nullptr;
@@ -30,12 +31,13 @@ private:
 	class UCharacterMovementComponent* MyMoveComp = nullptr;
 	class UAIPerceptionStimuliSourceComponent* Stimulus = nullptr;
 
-	void SetUpMyStimulis();
-	void PunchCooldownComplete();
+	class UWidgetComponent* MyHealthBar = nullptr;
 
 	TSubclassOf<class APickUps> Drop = nullptr;
 
-	bool IsDying = false;
+	void SetUpMyStimulis();
+	void PunchCooldownComplete();
+	void DisableHealthBar();
 
 protected:
 	// Called when the game starts or when spawned
@@ -51,7 +53,7 @@ public:
 	AZombie();
 
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// virtual void Tick(float DeltaTime) override;
 
 	void MeleeAttack(AActor* Target);
 

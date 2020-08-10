@@ -8,12 +8,13 @@
 #include "Perception/AISense_sight.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AZombie::AZombie()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	GetCapsuleComponent()->SetCapsuleSize(45.0f, 95.0f);
 
@@ -56,12 +57,9 @@ void AZombie::BeginPlay()
 	MyHealthComp->SetMaxHealth(30);
 	MyHealthComp->IHaveDied.AddUniqueDynamic(this, &AZombie::Death);
 	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &AZombie::ImHit);
-}
 
-// Called every frame
-void AZombie::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	MyHealthBar = FindComponentByClass<UWidgetComponent>();
+	MyHealthBar->SetVisibleFlag(false);
 }
 
 void AZombie::MeleeAttack(AActor* target)
@@ -92,8 +90,16 @@ void AZombie::PunchCooldownComplete()
 
 void AZombie::ImHit()
 {
-	//play hit sound
+	MyHealthBar->SetVisibleFlag(true);
+	FTimerHandle HealthUITimer;
+	GetWorld()->GetTimerManager().SetTimer(HealthUITimer, this, &AZombie::DisableHealthBar, 5.0f, false);
 }
+
+void AZombie::DisableHealthBar()
+{
+	MyHealthBar->SetVisibleFlag(false);
+}
+
 
 void AZombie::RagDoll()
 {
@@ -109,6 +115,7 @@ void AZombie::Death()
 	if (IsDying) { return; }
 	IsDying = true;
 
+	MyHealthBar->SetVisibleFlag(false);
 	DetachFromControllerPendingDestroy();
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

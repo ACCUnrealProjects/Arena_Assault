@@ -34,11 +34,11 @@ void AZombieAIController::SetupPerceptionSystem()
 {
 	AEnemyController::SetupPerceptionSystem();
 
-	AISightConfig->SightRadius = 5000.0f;
+	AISightConfig->SightRadius = 3000.0f;
 	AISightConfig->LoseSightRadius = AISightConfig->SightRadius * 1.1f;
 	AISightConfig->PeripheralVisionAngleDegrees = 360.0f;
 	AISightConfig->SetMaxAge(5.0f);
-	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 2500.0f;
+	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 1000.0f;
 	AISightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	AISightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	AISightConfig->DetectionByAffiliation.bDetectNeutrals = true;

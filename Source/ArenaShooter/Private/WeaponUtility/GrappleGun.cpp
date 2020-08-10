@@ -42,13 +42,22 @@ void AGrappleGun::Tick(float DeltaTime)
 
 	if (ConnectionMade)
 	{
-		if (AttachedActorMoveable && ActorGrappleHit)
+		if (AttachedActorMoveable)
 		{
-			CableEndPoint = ActorGrappleHit->GetActorLocation();
-			GrappleEndActor->SetActorLocation(CableEndPoint);
+			if (!ActorGrappleHit->IsValidLowLevel())
+			{
+				DropGrapple();
+			}
+			else
+			{
+				CableEndPoint = ActorGrappleHit->GetActorLocation();
+				GrappleEndActor->SetActorLocation(CableEndPoint);
+			}
 		}
+
 		PullOwnerToEnd();
 	}
+
 	else if (ActiveGrapple)
 	{
 		GrappleConnect(DeltaTime);
@@ -107,13 +116,13 @@ void AGrappleGun::GrappleAttempt(FVector GrappleStart, FRotator GrappleDir)
 		{
 			if (GrappleHot.Actor->FindComponentByClass<UStaticMeshComponent>()->Mobility == EComponentMobility::Movable)
 			{
-				ActorGrappleHit = GrappleHot.Actor.Get();
+				ActorGrappleHit = GrappleHot.Actor;
 				AttachedActorMoveable = true;
 			}
 		}
 		else if (GrappleHot.Actor->FindComponentByClass<USkeletalMeshComponent>())
 		{
-			ActorGrappleHit = GrappleHot.Actor.Get();
+			ActorGrappleHit = GrappleHot.Actor;
 			AttachedActorMoveable = true;
 		}
 	}

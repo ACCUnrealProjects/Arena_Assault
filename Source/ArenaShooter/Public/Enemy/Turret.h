@@ -37,6 +37,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Effects", meta = (AllowPrivateAccess = "true"))
 	class UParticleSystem* HitEffect = nullptr;
 
+	class UWidgetComponent* MyHealthBar = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Firing", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class ATracerRound> ProjectileBlueprint;
 	
@@ -52,6 +54,7 @@ private:
 	bool CanFire = true;
 
 	void SetCanFireTrue();
+	void DisableHealthBar();
 
 protected:
 	// Called when the game starts or when spawned
@@ -63,13 +66,16 @@ public:
 	ATurret();
 
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	//virtual void Tick(float DeltaTime) override;
 
 	void Fire(AActor* Target);
 
 	void AimAt(AActor* Target);
 
 	bool AmILookingAtTargetDir(FVector Direction);
+
+	UFUNCTION()
+	void ImHit();
 
 	UFUNCTION()
 	void Death();

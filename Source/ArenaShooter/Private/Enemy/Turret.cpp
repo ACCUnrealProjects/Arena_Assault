@@ -7,13 +7,14 @@
 #include "../Public/MeshComponets/TurretMesh.h"
 #include "../Public/Projectile/TracerRound.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATurret::ATurret()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	MyHealthComp= CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));
 	MyHealthComp->bEditableWhenInherited = true;
@@ -50,13 +51,10 @@ void ATurret::BeginPlay()
 	Super::BeginPlay();
 	MyAimingComp->SetUp(MyTurret, MyBarrel);
 	MyHealthComp->IHaveDied.AddUniqueDynamic(this, &ATurret::Death);
-}
+	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &ATurret::ImHit);
 
-// Called every frame
-void ATurret::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	MyHealthBar = FindComponentByClass<UWidgetComponent>();
+	MyHealthBar->SetVisibleFlag(false);
 }
 
 void ATurret::Fire(AActor* Target)
@@ -123,8 +121,22 @@ void ATurret::SetCanFireTrue()
 	CanFire = true;
 }
 
+void ATurret::DisableHealthBar()
+{
+	MyHealthBar->SetVisibleFlag(false);
+}
+
+void ATurret::ImHit()
+{
+	MyHealthBar->SetVisibleFlag(true);
+	FTimerHandle HealthUITimer;
+	GetWorld()->GetTimerManager().SetTimer(HealthUITimer, this, &ATurret::DisableHealthBar, 5.0f, false);
+}
+
 void ATurret::Death()
 {
+	MyHealthBar->SetVisibleFlag(false);
+
 	if (ExplotionSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ExplotionSound, GetActorLocation());
