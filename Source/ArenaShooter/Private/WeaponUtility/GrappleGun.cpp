@@ -44,7 +44,7 @@ void AGrappleGun::Tick(float DeltaTime)
 	{
 		if (AttachedActorMoveable)
 		{
-			if (!ActorGrappleHit->IsValidLowLevel())
+			if (ActorGrappleHit == nullptr || !ActorGrappleHit->IsValidLowLevel())
 			{
 				DropGrapple();
 			}

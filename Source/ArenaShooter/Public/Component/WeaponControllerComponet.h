@@ -31,15 +31,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
 	TArray<ABase_Weapon*> MyGuns;
-
-	TArray<GunType> GunSlots;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
 	ABase_Weapon* CurrentWeapon = nullptr;
 
+	TArray<GunType> GunSlots;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	TMap<GunType, UAnimMontage*> FireAnimations;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	TMap<GunType, UAnimMontage*> ReloadAnimations;
 

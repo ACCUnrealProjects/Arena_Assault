@@ -20,7 +20,7 @@ private:
 	TArray <class AZombieSpawnVolume*> MySpawingVols;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnAction", meta = (AllowPrivateAccess = "true"))
-	class AMovingPlatform* BlockingWall = nullptr;
+	TArray<class AMovingPlatform*> BlockingWall;
 
 	bool HaveIBeenTriggered = false;
 	bool AmIActive = false;

@@ -34,7 +34,7 @@ private:
 	float GrappleRange = 5000.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GrappleProperties", meta = (AllowPrivateAccess = "true"))
-	float GrapplePullForce = 10.0f;
+	float GrapplePullForce = 9.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GrappleMesh", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* GrappleShooter = nullptr;

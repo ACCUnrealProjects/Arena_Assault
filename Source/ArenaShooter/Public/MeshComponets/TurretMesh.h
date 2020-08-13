@@ -17,7 +17,7 @@ class ARENASHOOTER_API UTurretMesh : public UStaticMeshComponent
 private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "TurretMovement", meta = (AllowPrivateAccess = "true"))
-	float MaxDegreesPerSecond = 25;
+	float MaxDegreesPerSecond = 90;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TurretMovement", meta = (AllowPrivateAccess = "true"))
 	float MinTurn = -360.0f;

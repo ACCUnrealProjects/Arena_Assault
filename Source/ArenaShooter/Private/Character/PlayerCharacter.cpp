@@ -355,5 +355,6 @@ void APlayerCharacter::Destroyed()
 {
 	MyWeaponController->CleanUp();
 	MyGrappleController->CleanUp();
+	MyHealthComp->KillMe();
 	Super::Destroyed();
 }

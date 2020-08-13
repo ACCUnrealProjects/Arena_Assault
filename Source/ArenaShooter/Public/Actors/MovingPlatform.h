@@ -19,9 +19,12 @@ private:
 	FVector MovePoint;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MoveInfo", meta = (AllowPrivateAccess = "true"))
 	bool LoopMove = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MoveInfo", meta = (AllowPrivateAccess = "true"))
+	float MoveSpeed = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MoveInfo", meta = (AllowPrivateAccess = "true"))
+	bool AmIActive = false;
 
 	FVector StartPos;
-	bool AmIActive = false;
 	bool AmIMovingToPoint = false;
 
 protected:
@@ -33,9 +36,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	void MoveToPoint();
+	void MoveToPoint(float DeltaTime);
 
-	void MoveBack();
+	void MoveBack(float DeltaTime);
 
 	void ActivateMove();
 

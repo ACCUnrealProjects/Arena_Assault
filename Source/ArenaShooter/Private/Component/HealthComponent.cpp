@@ -54,6 +54,11 @@ bool UHealthComponent::AmIAtMaxHealth() const
 	return Health == MaxHealth;
 }
 
+bool UHealthComponent::AmIDead() const
+{
+	return Health <= 0;
+}
+
 void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	int32 intDamage = FPlatformMath::RoundToInt(Damage);
@@ -70,3 +75,8 @@ void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDam
 	}
 }
 
+void UHealthComponent::KillMe()
+{
+	Health = 0;
+	IHaveDied.Broadcast();
+}

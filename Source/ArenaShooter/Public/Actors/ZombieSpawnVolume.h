@@ -16,26 +16,26 @@ public:
 	AZombieSpawnVolume();
 
 private:
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* WhereToSpawn;
-
-	FActorSpawnParameters ZombieSpawnParams;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	float SpawnTimerLow = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	float SpawnTimerHigh = 1.5f;
 	FTimerHandle SpawnTimeHandler;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	int32 SpawnNumber = 10;
-	int32 ToSpawn;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	uint8 DropChance = 10;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	bool isSpawning = false;
+
+	int32 ToSpawn;
+
+	FActorSpawnParameters ZombieSpawnParams;
+
+	TArray<TWeakObjectPtr<AActor>> SpawnedEnemies;
 
 protected:
 	// Called when the game starts or when spawned
@@ -57,5 +57,7 @@ public:
 	FVector GetRandomPointInVolume();
 
 	void SpawnZombies();
+
+	bool HaveIFinishedSpawningAndAllDead();
 
 };

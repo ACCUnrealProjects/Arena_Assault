@@ -14,9 +14,7 @@ class ARENASHOOTER_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this component's properties
-	UHealthComponent();
+private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HealthSetUp", meta = (AllowPrivateAccess = "true"))
 	int32 MaxHealth = 100;
@@ -27,8 +25,10 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-
 public:
+
+	UHealthComponent();
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -40,6 +40,10 @@ public:
 	float GetHealthPercentage() const;
 
 	bool AmIAtMaxHealth() const;
+
+	bool AmIDead() const;
+
+	void KillMe();
 
 	UFUNCTION()
 	void TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);

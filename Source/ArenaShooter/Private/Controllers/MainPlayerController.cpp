@@ -2,6 +2,7 @@
 
 #include "../Public/Controllers/MainPlayerController.h"
 #include "../Public/Component/HealthComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMainPlayerController::AMainPlayerController()
 {
@@ -16,7 +17,8 @@ void AMainPlayerController::BeginPlay()
 void AMainPlayerController::MyPawnHasDied()
 {
 	StartSpectatingOnly();
-	//GetWorld()->DestroyActor(GetPawn());
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), true);
+
 }
 
 void AMainPlayerController::SetPawn(APawn* InPawn)

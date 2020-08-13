@@ -8,7 +8,7 @@ bool AHealthPickup::TriggerPickUp(AActor* OtherActor)
 {
 	UHealthComponent* ActorsHealthComp = OtherActor->FindComponentByClass<UHealthComponent>();
 	if (!ActorsHealthComp) { return false; }
-	if (!ActorsHealthComp->AmIAtMaxHealth()) { return false; }
+	if (ActorsHealthComp->AmIAtMaxHealth()) { return false; }
 	ActorsHealthComp->IncreaseHealth(HealthAmmount);
 	return true;
 }

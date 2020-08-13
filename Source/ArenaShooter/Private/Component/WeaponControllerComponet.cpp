@@ -36,8 +36,9 @@ void UWeaponControllerComponet::FireCurrentWeapon(FVector FirePoint, FRotator Fi
 	{
 		if (!WeaponAttachSkel) { return; }
 
-		UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
 		GunType MyGunType = CurrentWeapon->GetGunType();
+		UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
+
 		if (AnimInstance && FireAnimations.Contains(MyGunType))
 		{
 			AnimInstance->Montage_Play(FireAnimations[MyGunType]);
@@ -115,6 +116,12 @@ void UWeaponControllerComponet::AddGun(TSubclassOf<ABase_Weapon> NewWeapon, GunT
 		CurrentWeapon->ChangeActiveState(false);
 	}
 	CurrentWeapon = NewGun;
+
+	UAnimInstance* AnimInstance = WeaponAttachSkel->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->StopAllMontages(0.0f);
+	}
 }
 
 bool UWeaponControllerComponet::TryAndAddAmmoForGun(GunType GunT, int32 AmmoAmmount)
@@ -159,6 +166,7 @@ ABase_Weapon* UWeaponControllerComponet::GetCurrentGun()
 
 void UWeaponControllerComponet::CleanUp()
 {
+	CurrentWeapon->StopFire();
 	for (int32 i = 0; i < GunSlots.Num(); i++)
 	{
 		if (MyGuns[i] != nullptr)

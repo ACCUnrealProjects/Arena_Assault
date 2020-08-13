@@ -10,7 +10,7 @@
 AZombieSpawnVolume::AZombieSpawnVolume()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	WhereToSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("Spawn Volume"));
 	RootComponent = WhereToSpawn;
@@ -22,7 +22,11 @@ void AZombieSpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
 	ZombieSpawnParams.Owner = this;
-	//GetWorld()->GetTimerManager().SetTimer(SpawnTimeHandler,this,&AZombieSpawnVolume::SpawnZombies, FMath::FRandRange(SpawnTimerLow, SpawnTimerHigh),false);
+
+	if (isSpawning)
+	{
+		SpawnZombies();
+	}
 
 	ToSpawn = SpawnNumber;
 }
@@ -31,6 +35,16 @@ void AZombieSpawnVolume::BeginPlay()
 void AZombieSpawnVolume::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	for (int i = 0; i < SpawnedEnemies.Num(); i++)
+	{
+		if (SpawnedEnemies[i] == nullptr || !SpawnedEnemies[i]->IsValidLowLevel())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Zombie Dead"));
+			SpawnedEnemies.RemoveAt(i);
+			i--;
+		}
+	}
 }
 
 UBoxComponent* AZombieSpawnVolume::GetWhereToSpawn() const
@@ -50,12 +64,12 @@ void AZombieSpawnVolume::SpawnZombies()
 		isSpawning = false;
 		return; 
 	}
-	FVector SpawnLocation = GetRandomPointInVolume();
 
-	FRotator ZombieRotation;
-	ZombieRotation.Yaw = FMath::Rand() * 360.0f;
+	FVector SpawnLocation = GetRandomPointInVolume();
+	FRotator ZombieRotation = FRotator(0, FMath::Rand() * 360.0f,0);
 
 	AZombie* const NewZombie = GetWorld()->SpawnActor<AZombie>(ZombiesToSpawn, SpawnLocation, ZombieRotation, ZombieSpawnParams);
+	SpawnedEnemies.Add(TWeakObjectPtr<AActor>(NewZombie));
 
 	uint8 ZombieDrop = FMath::RandRange(0, 100);
 	if (ZombieDrop <= DropChance)
@@ -65,5 +79,18 @@ void AZombieSpawnVolume::SpawnZombies()
 	}
 	ToSpawn--;
 
-	GetWorld()->GetTimerManager().SetTimer(SpawnTimeHandler, this, &AZombieSpawnVolume::SpawnZombies, FMath::FRandRange(SpawnTimerLow, SpawnTimerHigh), false);
+	if (ToSpawn <= 0)
+	{
+		isSpawning = false;
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().SetTimer(SpawnTimeHandler, this, &AZombieSpawnVolume::SpawnZombies, FMath::FRandRange(SpawnTimerLow, SpawnTimerHigh), false);
+	}
+}
+
+
+bool AZombieSpawnVolume::HaveIFinishedSpawningAndAllDead()
+{
+	return isSpawning == false && SpawnedEnemies.Num() <= 0;
 }

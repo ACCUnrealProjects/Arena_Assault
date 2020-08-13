@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "../Public/Actors/MovingPlatform.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AMovingPlatform::AMovingPlatform()
@@ -18,7 +18,7 @@ void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
 	StartPos = GetActorLocation();
-	
+	AmIMovingToPoint = AmIActive;
 }
 
 // Called every frame
@@ -30,24 +30,54 @@ void AMovingPlatform::Tick(float DeltaTime)
 	{
 		if (AmIMovingToPoint)
 		{
-			MoveToPoint();
+			MoveToPoint(DeltaTime);
 		}
 		else
 		{
-			MoveBack();
+			MoveBack(DeltaTime);
 		}
 	}
 
 }
 
-void AMovingPlatform::MoveToPoint()
+void AMovingPlatform::MoveToPoint(float DeltaTime)
 {
+	FVector Direction = (MovePoint - GetActorLocation()).GetSafeNormal();
+	//FVector NewLocation = UKismetMathLibrary::VInterpTo(GetActorLocation(), MovePoint, DeltaTime, MoveSpeed);
+	FVector Velocity = (Direction * MoveSpeed * DeltaTime);
+	SetActorLocation(GetActorLocation() + Velocity);
 
+	if (GetActorLocation().Equals(MovePoint, 5.0f))
+	{
+		if (!LoopMove)
+		{
+			AmIActive = false;
+		}
+		else
+		{
+			AmIMovingToPoint = false;
+		}
+	}
 }
 
-void AMovingPlatform::MoveBack()
+void AMovingPlatform::MoveBack(float DeltaTime)
 {
+	FVector Direction = (StartPos - GetActorLocation()).GetSafeNormal();
+	//FVector NewLocation = UKismetMathLibrary::VInterpTo(GetActorLocation(), StartPos, DeltaTime, MoveSpeed);
+	FVector Velocity = (Direction * MoveSpeed * DeltaTime);
+	SetActorLocation(GetActorLocation() + Velocity);
 
+	if (GetActorLocation().Equals(StartPos, 5.0f))
+	{
+		if (!LoopMove)
+		{
+			AmIActive = false;
+		}
+		else
+		{
+			AmIMovingToPoint = true;
+		}
+	}
 }
 
 
