@@ -2,6 +2,7 @@
 
 #include "../Public/PickUps/PickUps.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 APickUps::APickUps()
 {
@@ -22,6 +23,10 @@ void APickUps::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 {
 	if(TriggerPickUp(OtherActor))
 	{
+		if (PickUpSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, PickUpSound, GetActorLocation());
+		}
 		Destroy();
 	}
 }

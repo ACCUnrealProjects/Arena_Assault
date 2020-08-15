@@ -35,7 +35,7 @@ void AZombieAIController::SetupPerceptionSystem()
 	AEnemyController::SetupPerceptionSystem();
 
 	AISightConfig->SightRadius = 3000.0f;
-	AISightConfig->LoseSightRadius = AISightConfig->SightRadius * 1.1f;
+	AISightConfig->LoseSightRadius = AISightConfig->SightRadius * 4.0f;
 	AISightConfig->PeripheralVisionAngleDegrees = 360.0f;
 	AISightConfig->SetMaxAge(5.0f);
 	AISightConfig->AutoSuccessRangeFromLastSeenLocation = 1000.0f;
