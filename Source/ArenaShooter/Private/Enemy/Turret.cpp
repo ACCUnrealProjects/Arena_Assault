@@ -31,12 +31,12 @@ ATurret::ATurret()
 	MyTurret = CreateDefaultSubobject<UTurretMesh>(TEXT("MyTurret"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> TurretAsset(TEXT("StaticMesh'/Game/MyStuff/Meshes/Turret/mortar_dome.mortar_dome'"));
 	MyTurret->SetStaticMesh(TurretAsset.Object);
-	MyTurret->AttachToComponent(Body, FAttachmentTransformRules::SnapToTargetIncludingScale, "Turret");
+	MyTurret->SetupAttachment(Body, "Turret");
 
 	MyBarrel = CreateDefaultSubobject<UBarrelMesh>(TEXT("MyBarrel"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> BarrelAsset(TEXT("StaticMesh'/Game/MyStuff/Meshes/Turret/mortar_barrel.mortar_barrel'"));
 	MyBarrel->SetStaticMesh(BarrelAsset.Object);
-	MyBarrel->AttachToComponent(MyTurret, FAttachmentTransformRules::SnapToTargetIncludingScale, "Barrel");
+	MyBarrel->SetupAttachment(MyTurret, "Barrel");
 
 	TurretFireEffect = CreateDefaultSubobject<UParticleSystemComponent>(FName("Fire Effect"));
 	TurretFireEffect->AttachToComponent(MyBarrel, FAttachmentTransformRules::KeepRelativeTransform, ("FireLocation"));
