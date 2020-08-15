@@ -18,7 +18,7 @@ ATurret::ATurret()
 
 	MyHealthComp= CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));
 	MyHealthComp->bEditableWhenInherited = true;
-	MyHealthComp->SetMaxHealth(200.0f);
+	MyHealthComp->SetMaxHealth(300.0f);
 
 	MyAimingComp = CreateDefaultSubobject<UTurretAimingComponent>(TEXT("MyAimingComponent"));
 	MyAimingComp->bEditableWhenInherited = true;

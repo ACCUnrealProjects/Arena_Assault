@@ -9,7 +9,7 @@ AAssult_Rifle::AAssult_Rifle()
 	ClipSize = 30;
 	MaxAmmo = 180;
 
-	DamagePerShot = 17;
+	DamagePerShot = 35;
 	Range = 8000.0f;
 
 	FireRate = 0.2f;

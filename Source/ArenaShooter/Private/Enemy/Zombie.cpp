@@ -22,6 +22,7 @@ AZombie::AZombie()
 
 	MyHealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("MyHealthComponent"));
 	MyHealthComp->bEditableWhenInherited = true;
+	MyHealthComp->SetMaxHealth(100);
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'"));
 	ZombieSkel = GetMesh();
@@ -54,7 +55,6 @@ void AZombie::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyHealthComp->SetMaxHealth(30);
 	MyHealthComp->IHaveDied.AddUniqueDynamic(this, &AZombie::Death);
 	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &AZombie::ImHit);
 

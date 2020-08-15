@@ -166,7 +166,11 @@ ABase_Weapon* UWeaponControllerComponet::GetCurrentGun()
 
 void UWeaponControllerComponet::CleanUp()
 {
-	CurrentWeapon->StopFire();
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
+	}
+	
 	for (int32 i = 0; i < GunSlots.Num(); i++)
 	{
 		if (MyGuns[i] != nullptr)

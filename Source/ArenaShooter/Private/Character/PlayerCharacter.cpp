@@ -67,6 +67,7 @@ void APlayerCharacter::BeginPlay()
 
 	MyWeaponController->SetAttachSkel(SM_Arms, TEXT("Palm_R"));
 	MyWeaponController->AddGun(StartWeapon, GunType::Pistol);
+	bWeWantToFire = false;
 
 	MyHealthComp->SetMaxHealth(100);
 	MyHealthComp->IHaveBeenHit.AddUniqueDynamic(this, &APlayerCharacter::TakenDamage);
@@ -113,7 +114,7 @@ void APlayerCharacter::WallRunning(float DeltaSeconds)
 		{
 			WallRunDir *= -1;
 		}
-		MyMoveComp->GravityScale = 0.35f;
+		MyMoveComp->GravityScale = 0.20f;
 		MyMoveComp->Velocity.Z = 0;
 		float CamRollCheck = FVector::DotProduct(WallRayCast.Normal, GetActorRightVector());
 		if (CamRollCheck >= 0)
@@ -199,13 +200,15 @@ void APlayerCharacter::JumpReleased()
 
 void APlayerCharacter::SetFire()
 {
-	bWeWantToFire = !bWeWantToFire;
-
-	if (!bWeWantToFire)
-	{
-		MyWeaponController->StopFire();
-	}
+	bWeWantToFire = true;
 }
+
+void APlayerCharacter::StopFire()
+{
+	bWeWantToFire = false;
+	MyWeaponController->StopFire();
+}
+
 
 void APlayerCharacter::FireGrapple()
 {
@@ -332,7 +335,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Dash", EInputEvent::IE_Pressed, this, &APlayerCharacter::Dash);
 	//Fire
 	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &APlayerCharacter::SetFire);
-	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &APlayerCharacter::SetFire);
+	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &APlayerCharacter::StopFire);
 	//GrappleShot
 	PlayerInputComponent->BindAction("GrappleShot", EInputEvent::IE_Pressed, this, &APlayerCharacter::FireGrapple);
 	PlayerInputComponent->BindAction("GrappleShot", EInputEvent::IE_Released, this, &APlayerCharacter::GrappleRelease);
@@ -353,8 +356,18 @@ void APlayerCharacter::Landed(const FHitResult& Hit)
 
 void APlayerCharacter::Destroyed()
 {
-	MyWeaponController->CleanUp();
-	MyGrappleController->CleanUp();
-	MyHealthComp->KillMe();
+	if (MyWeaponController)
+	{
+		MyWeaponController->CleanUp();
+	}
+	if (MyGrappleController)
+	{
+		MyGrappleController->CleanUp();
+	}
+	if (MyHealthComp)
+	{
+		MyHealthComp->KillMe();
+	}
+
 	Super::Destroyed();
 }

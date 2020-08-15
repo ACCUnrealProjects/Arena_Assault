@@ -94,6 +94,7 @@ protected:
 
 	//Weapon Controls
 	void SetFire();
+	void StopFire();
 	void Reload();
 
 	//Change Gun

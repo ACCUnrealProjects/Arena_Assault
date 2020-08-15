@@ -9,7 +9,7 @@ APistol::APistol()
 	ClipSize = 8;
 	MaxAmmo = 64;
 
-	DamagePerShot = 10.0f;
+	DamagePerShot = 40.0f;
 	Range = 5000.0f;
 
 	FireRate = 0.4f;

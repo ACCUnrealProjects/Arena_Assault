@@ -17,10 +17,10 @@ class ARENASHOOTER_API UBarrelMesh : public UStaticMeshComponent
 private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "BarrelMovement", meta = (AllowPrivateAccess = "true"))
-	float MaxDegreesPerSecond = 90;
+	float MaxDegreesPerSecond = 180.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "BarrelMovement", meta = (AllowPrivateAccess = "true"))
-	float MinTurn = 0.0f;
+	float MinTurn = -10.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "BarrelMovement", meta = (AllowPrivateAccess = "true"))
 	float MaxTurn = 40.0f;

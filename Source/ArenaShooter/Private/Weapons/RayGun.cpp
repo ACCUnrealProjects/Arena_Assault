@@ -14,7 +14,7 @@ ARayGun::ARayGun()
 	FireRate = 1.0f;
 	TotalReloadTime = 1.0f;
 
-	DamagePerShot = 100;
+	DamagePerShot = 200;
 	Range = 10000.0f;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("SkeletalMesh'/Game/FirstPerson/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
